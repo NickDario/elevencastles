@@ -1,0 +1,62 @@
+//#vehicles{
+  &.vehicles-page{
+    height:100%;
+  }
+  & .display {
+    position: relative;
+    overflow-y: auto;
+    height: 100%;
+    width: 100%;
+    & .info-pane{
+      padding: 25px 0 50px 0;
+      position:absolute;
+      margin-left:auto;
+      width:100%;
+      height: 100%;
+      & .panel{
+        overflow-y: auto;
+      }
+      & span.date{
+        position: absolute;
+        top: 20px;
+        right:20px;
+      }
+      & p {
+        text-align: justify;
+      }
+      & .equation{
+        font-weight: bold;
+        font-style: italic;
+        padding: 20px 10px;
+      }
+    }
+  }
+
+  & .control-bar{
+    z-index: 100;
+    position: absolute;
+    top: 25px;
+    left: 25px;
+    & > .btn-ctrl{
+      transition-duration: .1s;
+      margin-left: 25px;
+      width: 100px;
+      padding:5px 7px;
+      background:@primary-dark;
+      color:white;
+      text-decoration: none;
+      border: 1px solid transparent;
+      cursor: pointer;
+      display: inline-block;
+      text-align: center;
+      &:hover{
+        border: 1px solid white;
+        box-shadow: 0 0 30px -5px #464646;
+      }
+      &.on, &.paused{
+        border: 1px solid white;
+        box-shadow: 0 0 30px -5px #464646;
+      }
+    }
+  }
+//}

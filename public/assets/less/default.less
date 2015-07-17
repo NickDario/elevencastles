@@ -1,0 +1,40 @@
+html,body{
+  height:100%;
+}
+
+body{
+
+}
+
+#default-{
+  &main-container{
+    background-color: #000000;
+    background-image: url("../images/black-linen-2.png");
+    /*background: url("../images/black-linen-2.png") center;*/
+
+    height:100%;
+    position:fixed;
+//    z-index: -999;
+    width:100%;
+  }
+  &presentation-container{
+    background-color:rgba(0, 0, 0, .2);
+//    background-color:rgba(255, 255, 255, .4);
+    @shadow : 0 5px 30px -5px darken(@primary, 30%);
+    .box-shadow(@shadow:@shadow);
+    height:100%;
+  }
+  &content{
+    min-height: 500px;
+    height:100%;
+    color:white;
+    float:right;
+  }
+}
+
+.studio{
+  height : 100%;
+  width  : 100%;
+  cursor: none;
+}
+

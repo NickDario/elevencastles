@@ -1,0 +1,51 @@
+.noselect{
+  -webkit-user-select: none; /* Chrome/Safari */
+  -moz-user-select: none; /* Firefox */
+  -ms-user-select: none; /* IE10+ */
+
+  /* Rules below not implemented in browsers yet */
+  -o-user-select: none;
+  user-select: none;
+}
+
+
+.tree{
+  & > ul{
+    padding: 0 15px;
+    display:none;
+  }
+  & > span.triangle{
+    .noselect();
+    transition-duration: .1s;
+    display:inline-block;
+    -ms-transform: rotate(0deg); /* IE 9 */
+    -webkit-transform: rotate(0deg); /* Chrome, Safari, Opera */
+    transform: rotate(0deg);
+
+    color:white;
+    font-size:1em;
+  }
+  & > span.head{
+    .noselect();
+    cursor: pointer;
+
+    color:white;
+    font-size:1em;
+  }
+  &.open{
+    & > span.triangle {
+      -ms-transform: rotate(90deg); /* IE 9 */
+      -webkit-transform: rotate(90deg); /* Chrome, Safari, Opera */
+      transform: rotate(90deg);
+    }
+    & > ul {
+      display:block;
+      border-left: 2px solid @gray;
+    }
+  }
+}
+
+.nogutter{
+  padding-left:0px;
+  padding-right:0px;
+}

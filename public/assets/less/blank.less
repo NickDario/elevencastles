@@ -1,0 +1,111 @@
+#blank{
+  &-main-container{
+    height:100%;
+    width:100%;
+    background: black;
+  }
+  &-content{
+    height:100%;
+    width:100%;
+//    background-color: white;
+    div[class^="background"]{
+      position:absolute;
+      height:100%;
+      width:100%;
+      -webkit-background-size: cover;
+      -moz-background-size: cover;
+      -o-background-size: cover;
+      background-size: cover;
+      display: none;
+      & span {
+        display:block;
+        text-align: center;
+        color:white;
+        text-shadow: 0 5px 15px #303030;
+//        text-shadow:black;
+        letter-spacing: 8px;
+        font-size: 5em;
+        font-weight: bold;
+      }
+      &#bg-1{
+        background: url(../images/castles/auditorium1.jpg) no-repeat center center fixed;
+      }
+      &#bg-2{
+        background: url(../images/castles/auditorium2.jpg) no-repeat center center fixed;
+      }
+      &#bg-3{
+        background: url(../images/castles/lib.jpg) no-repeat center center fixed;
+      }
+      &#bg-4{
+        background: url(../images/castles/louvre.jpg) no-repeat center center fixed;
+      }
+      &#bg-5{
+        background: url(../images/castles/matrix_code.png) no-repeat center center fixed;
+      }
+      &#bg-6{
+        background: url(../images/castles/monalisa.jpg) no-repeat center center fixed;
+      }
+      &#bg-7{
+        background: url(../images/castles/rcmh.jpg) no-repeat center center fixed;
+      }
+      &#bg-8{
+        background: url(../images/castles/Theater_at_Delphi.jpg) no-repeat center center fixed;
+      }
+      &#bg-9{
+        background: url(../images/castles/vac-comp.jpg) no-repeat center center fixed;
+      }
+      &#bg-10{
+        background: url(../images/castles/van-gogh-starry-night.png) no-repeat center center fixed;
+      }
+    }
+    #castle {
+      position:absolute;
+      top:150px;
+      bottom:100px;
+      left:300px;
+      right:300px;
+      & div[class^="col"]{
+        height:16.6%;
+        padding:10px;
+        & .portal{
+          cursor: pointer;
+          height:100%;
+          transition-duration: .1s;
+          overflow:hidden;
+          & > a{
+            display: table;
+            width:100%;
+            height: 100%;
+            text-decoration: none;
+            & > span{
+              vertical-align: middle;
+              text-align: center;
+//              color:rgba(0, 0, 0, 1);
+//              text-shadow:0 0 4px darken(@primary, 20%);
+              font-size:2em;
+              font-weight: bold;
+              display:table-cell;
+              color:transparent;
+            }
+          }
+          &.lit{
+            & a > span{
+              display:table-cell;
+              color:rgba(0, 0, 0, .6);
+              text-shadow:0 0 4px rgba(111,111,111,0.8);
+            }
+            background:rgba(255, 255, 255, .6);
+            border: 1px solid darken(@primary, 20%);
+            @shadow : 0 0 10px 3px rgba(0,0,0,.4);
+            .box-shadow(@shadow: @shadow);
+          }
+          background:rgba(255, 255, 255, .1);
+          border: 1px solid darken(@primary, 20%);
+          @shadow : 0 0 4px 0 lighten(@primary, 20%);
+          .box-shadow(@shadow: @shadow);
+        }
+      }
+    }
+  }
+
+}

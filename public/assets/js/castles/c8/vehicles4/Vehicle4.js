@@ -26,6 +26,8 @@ function(Vector, Genome, Sense)
 
         //  Senses
         this.senses = config['senses'] != null ? config['senses'] : null;
+        this.senseWeight = 0;
+        this.focused = 0;
 
         //  Meta-attributes
         this.cm = null;
@@ -40,6 +42,8 @@ function(Vector, Genome, Sense)
         this.energy = null;
         this.cost = null;
         this.nutrition = null;
+        this.tSpeed = null;
+        this.rSpeed = null;
 
 
         this.health = null; // energy/ttd
@@ -91,7 +95,7 @@ function(Vector, Genome, Sense)
     {
         this._initIdentity();
         this._initSenses();
-        this._initSize();
+        this._initAttr();
         this._initCost();
         return this;
     };
@@ -125,10 +129,32 @@ function(Vector, Genome, Sense)
 
     Vehicle4.prototype._initBaseGenome =function(){
         Genome.call(this, {
-            tSpeed : 3,
-            rSpeed : 1,
             endurance : 30,
             acceleration : 1,
+            lvehicle : {
+              name: 'lvehicle',
+              val : 1,
+              ms  : 0.5,
+              minv: null
+            },
+            svehicle : {
+              name: 'svehicle',
+              val : -1,
+              ms  : 0.5,
+              minv: null
+            },
+            vehicle : {
+              name: 'vehicle',
+              val : 0,
+              ms  : 0.5,
+              minv: null
+            },
+            fuel : {
+              name: 'fuel',
+              val : 2,
+              ms  : 0.5,
+              minv: null
+            },
             radius : {
                 name:'radius',
                 val : Math.floor(2 + Math.random() * 2),
@@ -137,8 +163,7 @@ function(Vector, Genome, Sense)
             },
             metabolism : {
                 name: 'metabolism',
-                val : 1,
-                ms  : 0.1
+                val : 1
             },
             spawn : {
                 name: 'spawn',
@@ -184,6 +209,7 @@ function(Vector, Genome, Sense)
             this.radialSize = this.senses[i].getGene('radius') > this.radialSize
                 ? this.senses[i].getGene('radius')
                 : this.radialSize;
+            this.senseWeight += this.senses[i].getGene('importance');
         }
     };
 
@@ -196,7 +222,7 @@ function(Vector, Genome, Sense)
         this.cost *= this.getGene('metabolism');
     };
 
-    Vehicle4.prototype._initSize = function()
+    Vehicle4.prototype._initAttr = function()
     {
         this.radius = this.getGene('radius');
         this.area = this.radius * 2 * Math.PI;
@@ -204,8 +230,11 @@ function(Vector, Genome, Sense)
         this.energy = this.full * 0.5;
         this.life = this.radius * 4000;
         this.ttd  = this.radius * 4000;
-        this.adl  = this.life - this.energy;
+        this.adl  = this.life - (this.energy * 2);
         this.cm = Math.pow(this.area, 5) * 0.0001;
+
+        this.tSpeed = this.getGene('metabolism') * 2;
+        this.rSpeed = this.getGene('metabolism') / 2;
     };
 
     Vehicle4.prototype.getTailColor = function()
@@ -249,20 +278,32 @@ function(Vector, Genome, Sense)
 
     Vehicle4.prototype.behavior = function()
     {
-        var m = this.direction.getMagnitude();
         this.pdirection = this.direction;
 
-        if(m > (this.getGene('tSpeed') * this.getGene('metabolism'))) {
-            this.direction.setMagnitude(this.getGene('tSpeed') * this.getGene('metabolism'));
-        } else if(m > this.getGene('rSpeed') * this.getGene('metabolism')) {
-            this.direction.setMagnitude(m - m/this.getGene('endurance'));
+        var focused = null;
+        for(var i = 0; i < this.getGene('sensesCount'); i ++) {
+          if(this.senses[i].sensation.getMagnitude() > 0){
+            if(focused == null){
+              this.direction.addVector(this.senses[i].sensation);
+              focused = i;
+              continue;
+            }
+            if(this.senses[i].getGene('importance') > this.senses[focused].getGene('importance')){
+              this.direction = this.pdirection;
+              this.direction.addVector(this.senses[i].sensation);
+            }
+          }
         }
 
-        for(var i = 0; i < this.getGene('sensesCount'); i ++) {
-            this.direction.addVector(this.senses[i].sensation);
+        var m = this.direction.getMagnitude();
+        if(m > this.tSpeed) {
+          this.direction.setMagnitude(this.tSpeed);
+        } else if(m > this.rSpeed) {
+          this.direction.setMagnitude(m - m/this.getGene('endurance'));
         }
-        this.live();
+
         this.move();
+        this.live();
     };
 
     Vehicle4.prototype.reproduce = function()
@@ -301,12 +342,12 @@ function(Vector, Genome, Sense)
 
     Vehicle4.prototype._calcEnergy = function()
     {
-        this.energy -=  1 + this.direction.getMagnitude() * this.cost * 0.00001;
+        this.energy -=  1 + this.getGene('metabolism') * this.cost * 0.00001;
     };
 
     Vehicle4.prototype._calcHealth = function()
     {
-        this.health = (this.ttd*this.energy*this.getGene('metabolism')) / (this.life*this.full*this.getGene('metabolism'));
+        this.health = (this.ttd*this.energy) / (this.life*this.full);
     };
 
     Vehicle4.prototype._calcRepr = function()
@@ -321,22 +362,22 @@ function(Vector, Genome, Sense)
     };
 
     Vehicle4.prototype.canEat = function(object){
-        return object.type == 'fuel' || object.radius < this.radius;
+        return object.type == 'fuel' || object.radius + 1 <= this.radius;
     };
 
     Vehicle4.prototype.sense = function(object)
     {
         for(var i = 0; i < this.getGene('sensesCount'); i ++) {
-            var type = object.type;
-            if(type == 'vehicle'){
-                if(object.radius > this.radius) {
-                    type = 'lvehicle';
-                } else if(object.radius < this.radius) {
-                    type = 'svehicle';
-                }
+          var type = object.type;
+          this.senses[i].sense(object);
+          if(type == 'vehicle'){
+            if(object.radius + 1> this.radius) {
+                type = 'lvehicle';
+            } else if(object.radius < this.radius) {
+                type = 'svehicle';
             }
-            this.senses[i].sense(object);
-            this.senses[i].sensation.normalize(this.senses[i].getGene(type));
+          }
+          this.senses[i].sensation.normalize(this.getGene(type) * this.senses[i].getGene('importance') / this.senseWeight);
         }
     };
 

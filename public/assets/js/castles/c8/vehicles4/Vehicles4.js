@@ -14,7 +14,10 @@ function(Canvas, VectorND, Vehicle, Plant){
         this.plants = [];
         this.renderCount = 0;
 
-        this.regionPlantCapacity = 25;
+        this.water = 1000;
+        this.lakes = [];
+
+        this.regionPlantCapacity = 100;
 
         this.showGrid = false;
         this.showSenses = false;
@@ -37,6 +40,8 @@ function(Canvas, VectorND, Vehicle, Plant){
 
         this.initPlants();
 
+        this.initLakes();
+
         this.start();
 
         return this;
@@ -46,8 +51,20 @@ function(Canvas, VectorND, Vehicle, Plant){
 
     Vehicles4.prototype.initUserVehicle = function()
     {
-        this.uv = this._createVehicle();
-        this.uv.senses_count = 0;
+      this.uv = this._createVehicle();
+      this.uv.senses_count = 0;
+      var world = this;
+      document.addEventListener('mousedown', function(e){
+        world.addVehicle(e.pageX - world.canvas_rect.left, e.pageY - world.canvas_rect.top)
+      });
+    };
+
+    Vehicles4.prototype.addVehicle = function(x, y)
+    {
+      this.vehicles.push(new Vehicle({
+        center: new VectorND(x, y),
+        direction : this.uv.direction
+      }));
     };
 
     Vehicles4.prototype.initVehicles = function()
@@ -73,17 +90,45 @@ function(Canvas, VectorND, Vehicle, Plant){
     {
         var rpc = 0;
         for(var v = 0; v < region.length; v++){
-            if(region[v].type == 'fuel'){
-                if(region[v].spore == 0){
-                    rpc += region[v].cost;
+            if(region[v].type == 'lake'){
+              this.ctx.beginPath();
+              this.ctx.fillStyle = 'rgba(40, 80, 180, 0.7)';
+              this.ctx.arc(region[v].v.getX(), region[v].v.getY(), region[v].r, 0, 2*Math.PI);
+              this.ctx.fill();
+              continue;
+            }else if(region[v].type == 'fuel'){
+              if(region.length > this.regionPlantCapacity && region[v].spore > 0){
+                region[v].ttd = 0;
+              }
+
+              var c = this.canvas.width;
+              var dk = 0;
+              for(var l = 0; l < this.lakes.length; l ++){
+                  var lk = 0;
+                  if(this.lakes[l].a > 0){
+                    var dl = this.lakes[l].v.vectorSubtract(region[v].center).getMagnitude();
+                    var dlr = dl - this.lakes[l].r;
+                    if(dlr < c) {
+                      dk = dl;
+                      lk = l;
+                      c = dlr;
+                    }
+                  }
                 }
+                if(c > 0){
+                  region[v].ttd -= dk * 0.01;
+                } else {
+                  this.lakes[lk].c -= region[v].cost;
+                  region[v].tdd -= 10;
+                }
+
                 continue;
             }
             if(region[v].uuid == this.uv.uuid) continue;
 
             //this._bounceEdge(region[v]);
             for(var rv = 0; rv < neighbors.length; rv ++){
-                if(region[v].uuid == neighbors[rv].uuid) continue;
+                if(region[v].uuid == neighbors[rv].uuid || neighbors[rv].type == 'lake') continue;
                 if(neighbors[rv].type == 'fuel' && neighbors[rv].spore == 0) rpc += neighbors[rv].cost;
                 var d = region[v].center.vectorSubtract(neighbors[rv].center).getMagnitude();
                 if( d > region[v].radialSize + neighbors[rv].radius) continue;
@@ -136,6 +181,25 @@ function(Canvas, VectorND, Vehicle, Plant){
             }
         }
         return false;
+    };
+
+    Vehicles4.prototype.initLakes = function()
+    {
+      var lakeWater = 0;
+      while(this.water > lakeWater){
+        var la = (Math.random() * this.water);
+        lakeWater += la;
+        var lr = la / (2 * Math.PI);
+        this.lakes.push({
+          type: 'lake',
+          v: new VectorND(
+              Math.random() * (this.canvas.width - lr * 2) + lr,
+              Math.random() * (this.canvas.height - lr * 2) + lr),
+          r: lr,
+          a: la,
+          c: la
+        });
+      }
     };
 
     Vehicles4.prototype._bounceEdge = function(vehicle)
@@ -200,6 +264,11 @@ function(Canvas, VectorND, Vehicle, Plant){
             this.drawRegions();
         }
 
+        for(var a=0; a<this.lakes.length; a ++) {
+          this.lakes[a].c = this.lakes[a].a/9;
+          this.addToRegion(this.lakes[a], this.lakes[a].v.getX(), this.lakes[a].v.getY());
+        }
+
         if(this.mpX - this.uv.center.getX() || this.mpY - this.uv.center.getY()){
             this.uv.direction.setVector({
                 x: (this.mpX - this.uv.center.getX()),
@@ -231,7 +300,6 @@ function(Canvas, VectorND, Vehicle, Plant){
                 continue;
             }
             this.plants[j].grow();
-            var grow = this.plants[j].getGene('growthRate');
             if(Math.random() * 5000 > 5000-1){
                 for(var k = 0; k < 10; k ++){
                     this.plants.push(this.plants[j].reproduce(w, h));

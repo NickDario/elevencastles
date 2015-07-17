@@ -19,6 +19,7 @@ function(Segment, Vector, Genome)
         this.inputs = [];
         this.sensation  = new Vector(0,0);
         this.cost = null;
+        this.vital = false;
 
         this.traits = config['traits'] != null ? config['traits'] : {};
         //this.genome = config['genome'] != null ? config['genome'] : null;
@@ -41,20 +42,23 @@ function(Segment, Vector, Genome)
     Sense.prototype._initBaseGenome = function()
     {
         Genome.call(this, {
+            importance: {
+              name : 'importance',
+              val  : 1,
+              ms   : 0,
+              minv : 0.5,
+            },
             svehicle:{
                 name:'svehicle',
-                val:1,
-                minv:null
+                val:1
             },
             lvehicle:{
                 name:'lvehicle',
-                val:-1,
-                minv:null
+                val:-1
             },
             vehicle:{
                 name:'vehicle',
-                val:0,
-                minv:null
+                val:0
             },
             fuel:{
                 name:'fuel',

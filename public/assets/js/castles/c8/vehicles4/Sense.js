@@ -47,28 +47,33 @@ function(Segment, Vector, Genome)
               val  : 1,
               ms   : 0,
               minv : 0.5,
+              mr : 50
             },
             svehicle:{
-                name:'svehicle',
-                val:1
+              name:'svehicle',
+              val:1,
+              mr: 50
             },
             lvehicle:{
-                name:'lvehicle',
-                val:-1
+              name:'lvehicle',
+              val:-1,
+              mr: 50
             },
             vehicle:{
-                name:'vehicle',
-                val:0
+              name:'vehicle',
+              val:0,
+              mr: 50
             },
             fuel:{
-                name:'fuel',
-                val:1,
-                ms: 0.4
+              name:'fuel',
+              val:1,
+              ms: 0.4,
+              mr: 50
             },
             arc : {
-                name: 'arc',
-                val : Math.PI * 0.5,
-                ms  : Math.PI * 0.1
+              name: 'arc',
+              val : Math.PI * 0.5,
+              ms  : Math.PI * 0.1
             },
             radius : {
                 name: 'radius',

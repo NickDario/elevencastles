@@ -8,20 +8,20 @@ define(function(){
         this.type = 'gene';
         this.name = config['name'] != null ? config['name'] : 'bGene'; //  Identifier for Gene
         this.val  = config['val'] != null ? config['val'] : 1;       //  Value of Gene
-        this.mr  = config['mr'] != null ? config['mr'] : 2;          //  Mutation Rate
+        this.mr  = config['mr'] != null ? config['mr'] : 20;          //  Mutation Rate
         this.ms = config['ms'] != null ? config['ms'] : 1;      //  Mutation Step
-        this.minv = config['minv'] != null ? config['minv'] : 0.1;
-        this.maxv = config['maxv'] != null ? config['maxv'] : null;
+        this.minv = config['minv'] !== undefined ? config['minv'] : 0.1;
+        this.maxv = config['maxv'] !== undefined  ? config['maxv'] : null;
     };
 
     Gene.constructor = Gene;
     Gene.prototype = {
 
         mutate : function(){
-            var seed = Math.random() * this.mr;
-            if( seed <= this.mr * 0.2) {
+            var seed = Math.random() * 100;
+            if( seed <= this.mr) {
                 this.val += this.ms;
-            } else if(seed >= this.mr * 0.8) {
+            } else if(seed >= 100 - this.mr) {
                 this.val -= this.ms;
             }
             if(this.minv != null && this.val <= this.minv) {
@@ -33,11 +33,11 @@ define(function(){
         },
 
         replicate:function(){
-            var seed = Math.floor(Math.random() * this.mr);
+            var seed = Math.random() * this.mr;
             var nVal;
-            if( seed == this.mr * 0.2) {
+            if( seed <= this.mr * 0.2) {
                 nVal = this.val + this.ms;
-            } else if(seed == this.mr * 0.8){
+            } else if(seed >= this.mr * 0.8){
                 nVal = this.val - this.ms;
             }
 

@@ -8,7 +8,7 @@ function(Canvas, VectorND, Vehicle, Plant){
 
     var Vehicles4 = function(config){
         Canvas.call(this, config);
-        this.vehicle_count = config['vehicle_count'] != null ? config['vehicle_count'] : 20;
+        this.vehicle_count = config['vehicle_count'] != null ? config['vehicle_count'] : 40;
         this.vehicles = [];
         this.plants_count = config['plants_count'] != null ? config['plants_count'] : 500;
         this.plants = [];
@@ -53,17 +53,13 @@ function(Canvas, VectorND, Vehicle, Plant){
     {
       this.uv = this._createVehicle();
       this.uv.senses_count = 0;
-      var world = this;
-      document.addEventListener('mousedown', function(e){
-        world.addVehicle(e.pageX - world.canvas_rect.left, e.pageY - world.canvas_rect.top)
-      });
     };
 
     Vehicles4.prototype.addVehicle = function(x, y)
     {
       this.vehicles.push(new Vehicle({
         center: new VectorND(x, y),
-        direction : this.uv.direction
+        direction : this.uv.direction.getVector()
       }));
     };
 
@@ -100,7 +96,6 @@ function(Canvas, VectorND, Vehicle, Plant){
               if(region.length > this.regionPlantCapacity && region[v].spore > 0){
                 region[v].ttd = 0;
               }
-
               var c = this.canvas.width;
               var dk = 0;
               for(var l = 0; l < this.lakes.length; l ++){
@@ -126,14 +121,12 @@ function(Canvas, VectorND, Vehicle, Plant){
             }
             if(region[v].uuid == this.uv.uuid) continue;
 
-            //this._bounceEdge(region[v]);
             for(var rv = 0; rv < neighbors.length; rv ++){
                 if(region[v].uuid == neighbors[rv].uuid || neighbors[rv].type == 'lake') continue;
                 if(neighbors[rv].type == 'fuel' && neighbors[rv].spore == 0) rpc += neighbors[rv].cost;
                 var d = region[v].center.vectorSubtract(neighbors[rv].center).getMagnitude();
                 if( d > region[v].radialSize + neighbors[rv].radius) continue;
                 if(neighbors[rv].ghost > 0 || neighbors[rv].spore > 0) continue;
-                //if(neighbors[rv].spore > 0) continue;
                 if(d <= (region[v].radius + neighbors[rv].radius)){
                     if(region[v].canEat(neighbors[rv])){
                         region[v].eat(neighbors[rv]);
@@ -279,7 +272,7 @@ function(Canvas, VectorND, Vehicle, Plant){
             x: this.mpX,
             y: this.mpY
         });
-        this.uv.energy = 1000;
+        this.uv.energy = this.uv.full;
         this.uv.ghost = 0;
         this.uv.radius = 2;
         this.addToRegion(this.uv, this.uv.center.getX(), this.uv.center.getY());

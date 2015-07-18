@@ -111,7 +111,7 @@ function(Canvas, VectorND, Vehicle, Plant){
                   }
                 }
                 if(c > 0){
-                  region[v].ttd -= dk * 0.05;
+                  region[v].ttd -= dk * 0.02;
                 } else {
                   this.lakes[lk].c -= region[v].cost;
                   region[v].tdd -= 10;
@@ -294,10 +294,11 @@ function(Canvas, VectorND, Vehicle, Plant){
             }
             this.plants[j].grow();
             if(Math.random() * 2000 > 2000-1){
-                for(var k = 0; k < 10; k ++){
-                    this.plants.push(this.plants[j].reproduce(w, h));
-                    pl ++;
-                }
+              var c = (this.plants[j].life - this.plants[j].ttd)/(this.plants[j].life/11);
+              for(var k = 0; k < c; k ++){
+                this.plants.push(this.plants[j].reproduce(w, h));
+                pl ++;
+              }
             }
         }
 

@@ -235,7 +235,7 @@ function(Vector, Genome, Sense)
     {
         this.radius = this.getGene('radius');
         this.area = this.radius * 2 * Math.PI;
-        this.full = this.radius * 400;
+        this.full = this.radius * 200;
         this.energy = this.full * 0.5;
         this.life = this.radius * 4000;
         this.ttd  = this.radius * 4000;
@@ -396,7 +396,7 @@ function(Vector, Genome, Sense)
             value = importance;
             t = i;
             this.focusing = true;
-            this.focus = 10;
+            this.focus = 10 * (this.life - this.energy) / (this.life / 4);
           }
         }
       }

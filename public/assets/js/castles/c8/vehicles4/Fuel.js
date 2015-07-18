@@ -73,10 +73,11 @@ define(['etc/VectorND', 'c8/vehicles4/Genome'], function(Vector, Genome){
                 ms  : 25
             },
             spread     : {
-                name:'spread',
-                val: 50,
-                ms: 25,
-                minv : 25
+              name:'spread',
+              val: 50,
+              ms: 25,
+              minv : 25,
+              maxv : 250
             },
             growthRate : {
                 name:'growthRate',

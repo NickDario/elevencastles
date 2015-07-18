@@ -14,13 +14,14 @@
     </div>
 
     <div class="display">
-            <canvas id="mp-canvas">
-
-            </canvas>
+            <canvas id="mp-canvas"></canvas>
             <div class="scoreboard">
                 <span class="high">0</span>
                 <span class="current">0</span>
             </div>
+    </div>
+    <div class="path">
+        <canvas id="path-canvas"></canvas>
     </div>
 
 </div>

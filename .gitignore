@@ -5,6 +5,7 @@ composer.lock
 .env.php
 .DS_Store
 Thumbs.db
-.*.wav
-.*.mp3
+*.wav
+*.mp3
+.idea/*
 

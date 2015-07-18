@@ -9,8 +9,9 @@ define(['../jquery.min'], function(jquery){
     $('[data-script="musicpath"]').each(function(){
         require(['c6/Musicpath'], function(Musicpath){
             var mp = new Musicpath({
-                canvas_id:'mp-canvas',
-                audio_id :'mp-audio'
+              canvas_id:'mp-canvas',
+              audio_id :'mp-audio',
+              pathcanvas_id: 'path-canvas'
             });
             mp.init();
             $(mp).on('complete', function(){

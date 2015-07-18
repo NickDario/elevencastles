@@ -47,8 +47,8 @@ define(function(){
         this.canvas    = document.getElementById(this.canvas_id);
         this.ctx       = this.canvas.getContext("2d");
         this.container = this.canvas.parentNode;
-
         this.canvas_rect = this.canvas.getBoundingClientRect();
+
         this.canvas.height= this.container.clientHeight - 20;
         this.canvas.width = this.container.clientWidth - 20;
     };

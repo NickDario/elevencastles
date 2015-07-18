@@ -394,18 +394,21 @@ body {
 #musicpath.music-page {
   height: 100%;
 }
-#musicpath .display {
+#musicpath .display,
+#musicpath .path {
   position: relative;
   overflow-y: auto;
   height: 100%;
   width: 100%;
 }
-#musicpath .display .scoreboard {
+#musicpath .display .scoreboard,
+#musicpath .path .scoreboard {
   transition-duration: 0.5s;
   -webkit-transition-duration: 0.5s;
   opacity: 0;
 }
-#musicpath .display:hover .scoreboard {
+#musicpath .display:hover .scoreboard,
+#musicpath .path:hover .scoreboard {
   opacity: 1;
 }
 #musicpath .source {

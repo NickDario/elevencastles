@@ -8,7 +8,7 @@ function(Canvas, VectorND, Vehicle, Plant){
 
     var Vehicles4 = function(config){
         Canvas.call(this, config);
-        this.vehicle_count = config['vehicle_count'] != null ? config['vehicle_count'] : 40;
+        this.vehicle_count = config['vehicle_count'] != null ? config['vehicle_count'] : 20;
         this.vehicles = [];
         this.plants_count = config['plants_count'] != null ? config['plants_count'] : 500;
         this.plants = [];

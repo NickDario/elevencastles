@@ -113,67 +113,81 @@ define(['../jquery.min'], function(jquery){
                 }
             });
 
-            $('.rendergrid', controls).on('click', function(){
-                $(this).toggleClass('on');
-                vehicles.showGrid = !vehicles.showGrid;
+
+            $('.rendergrid', controls).on('click', function(e){
+              e.stopPropagation();
+              e.preventDefault();
+              $(this).toggleClass('on');
+              vehicles.showGrid = !vehicles.showGrid;
+
             });
 
-            $('.rendersenses', controls).on('click', function(){
-                $(this).toggleClass('on');
-                vehicles.showSenses = !vehicles.showSenses;
+            $('.rendersenses', controls).on('click', function(e){
+              e.stopPropagation();
+              e.preventDefault();
+              $(this).toggleClass('on');
+              vehicles.showSenses = !vehicles.showSenses;
             });
-            $('.renderspores', controls).on('click', function(){
-                $(this).toggleClass('on');
-                vehicles.showSpores = !vehicles.showSpores;
+            $('.renderspores', controls).on('click', function(e){
+              e.stopPropagation();
+              e.preventDefault();
+              $(this).toggleClass('on');
+              vehicles.showSpores = !vehicles.showSpores;
             });
 
-            $('.info', controls).on('click', function(){
-                $(this).toggleClass('on');
-                $('#v3-info').toggle();
+            $('.info', controls).on('click', function(e){
+              e.stopPropagation();
+              e.preventDefault();
+              $(this).toggleClass('on');
+              $('#v3-info').toggle();
             });
         });
     });
 
 
     $('[data-script="vehiclesiv"]').each(function(){
-        var controls = $('#v4-ctrl');
-        console.log('__vehiclesiii__');
-        require(['c8/vehicles4/Vehicles4'], function(Vehicles){
-            var vehicles = new Vehicles({
-                canvas_id:'vehiclesiv-canvas'
-            }).init();
+      var controls = $('#v4-ctrl');
+      console.log('__vehiclesiii__');
+      require(['c8/vehicles4/Vehicles4'], function(Vehicles){
+        var vehicles = new Vehicles({
+            canvas_id:'vehiclesiv-canvas'
+        }).init();
 
-            $('.pp', controls).on('click', function(e){
-                e.preventDefault();
-                e.stopPropagation();
-                $(this).toggleClass('paused');
-                $(this).find('span').toggle();
-                if($(this).hasClass('paused')){
-                    vehicles.stop();
-                } else{
-                    vehicles.start();
-                }
-            });
-
-            $('.rendergrid', controls).on('click', function(){
-                $(this).toggleClass('on');
-                vehicles.showGrid = !vehicles.showGrid;
-            });
-
-            $('.rendersenses', controls).on('click', function(){
-                $(this).toggleClass('on');
-                vehicles.showSenses = !vehicles.showSenses;
-            });
-            $('.renderspores', controls).on('click', function(){
-                $(this).toggleClass('on');
-                vehicles.showSpores = !vehicles.showSpores;
-            });
-
-            $('.info', controls).on('click', function(){
-                $(this).toggleClass('on');
-                $('#v3-info').toggle();
-            });
+        $('.pp', controls).on('click', function(e){
+            e.preventDefault();
+            e.stopPropagation();
+            $(this).toggleClass('paused');
+            $(this).find('span').toggle();
+            if($(this).hasClass('paused')){
+                vehicles.stop();
+            } else{
+                vehicles.start();
+            }
         });
+
+        $('#vehiclesiv-canvas').on('click', function(e){
+          vehicles.addVehicle(e.pageX - vehicles.canvas_rect.left, e.pageY - vehicles.canvas_rect.top);
+        });
+
+        $('.rendergrid', controls).on('click', function(){
+            $(this).toggleClass('on');
+            vehicles.showGrid = !vehicles.showGrid;
+        });
+
+        $('.rendersenses', controls).on('click', function(){
+            $(this).toggleClass('on');
+            vehicles.showSenses = !vehicles.showSenses;
+        });
+        $('.renderspores', controls).on('click', function(){
+            $(this).toggleClass('on');
+            vehicles.showSpores = !vehicles.showSpores;
+        });
+
+        $('.info', controls).on('click', function(){
+            $(this).toggleClass('on');
+            $('#v3-info').toggle();
+        });
+      });
     });
 
     $('.head').on('click', function(){

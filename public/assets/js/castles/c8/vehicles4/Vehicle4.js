@@ -25,9 +25,9 @@ function(Vector, Genome, Sense)
 
       //  Senses
       this.senses = config['senses'] != null ? config['senses'] : null;
-      this.senseWeight = 0;
-      this.focused = 0;
-      this.focusing = 0;
+      this.focus = 0;
+      this.focusing = false;
+      this.focused = false;
       this.target = 0;
 
       //  Meta-attributes
@@ -277,6 +277,11 @@ function(Vector, Genome, Sense)
         this.center.setVector(v);
     };
 
+    Vehicle4.prototype.scan = function()
+    {
+      return this.direction;
+    };
+
     Vehicle4.prototype.move = function()
     {
         this.center.addVector(this.direction);
@@ -289,27 +294,12 @@ function(Vector, Genome, Sense)
     {
       this.pdirection = this.direction;
 
-      if(this.focused > 0 && this.focusing){
-        this.focused --;
-        this.move();
-        this.live();
-        return;
+      if(this.target == null) {
+        this.direction = this.scan();
+      }else if(this.focusing && this.focus){
+        this.direction.addVector(this.target);
+        this.focus--;
       }
-      var  focused = null;
-      for(var i = 0; i < this.getGene('sensesCount'); i ++) {
-        if(this.senses[i].sensation.getMagnitude() > 0){
-          if(focused == null){
-            this.direction.addVector(this.senses[i].sensation);
-            focused = i;
-            continue;
-          }
-          if(this.senses[i].getGene('importance') > this.senses[focused].getGene('importance')){
-            this.direction = this.pdirection;
-            this.direction.addVector(this.senses[i].sensation);
-          }
-        }
-      }
-
 
       var m = this.direction.getMagnitude();
       if(m > this.tSpeed) {
@@ -319,8 +309,6 @@ function(Vector, Genome, Sense)
       } else if(m < this.rSpeed) {
         this.direction.setMagnitude(this.rSpeed);
       }
-
-      this.focusing = this.focused > 0;
 
       this.move();
       this.live();
@@ -378,7 +366,6 @@ function(Vector, Genome, Sense)
 
     Vehicle4.prototype._calcNutrition = function()
     {
-        //this.nutrition = this.cost * this.health;
         this.nutrition = 10000;
     };
 
@@ -388,8 +375,10 @@ function(Vector, Genome, Sense)
 
     Vehicle4.prototype.sense = function(object)
     {
-      if(this.focusing) return;
-      this.focused = 0;
+      if(this.focusing && this.focus > 0) return;
+      var value = null;
+      var t = null;
+      this.focus = 0;
       for(var i = 0; i < this.getGene('sensesCount'); i ++) {
         var type = object.type;
         this.senses[i].sense(object);
@@ -400,13 +389,19 @@ function(Vector, Genome, Sense)
             type = 'svehicle';
           }
         }
-        var importance = this.senses[i].getGene('importance') * this.getGene(type);
-        this.senses[i].sensation.normalize(importance);
-        if(importance > this.focused) {
-          this.focusing = false;
-          this.focused = importance * 10;
+
+        if(this.senses[i].sensation.getMagnitude() > 0) {
+          var importance = this.senses[i].getGene('importance') * this.getGene(type);
+          if (value == null || importance > value) {
+            value = importance;
+            t = i;
+            this.focusing = true;
+            this.focus = 10;
+          }
         }
       }
+
+      this.target = t == null ? null : this.senses[t].sensation.getNormalized(value);
     };
 
     return Vehicle4

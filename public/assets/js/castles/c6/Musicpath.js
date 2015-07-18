@@ -12,8 +12,12 @@ define(['etc/Canvas', 'etc/Audio'], function(Canvas, Audio){
 
     this.riseOffset = .05; //percent
     this.weight     = 150; // inversely related to rate of rise
+    this.ch2 = 0;
 
     this.r_bucket = 30;
+    this.bucket = 0;
+    this.f_bucket = 2000;
+
 
 
     this.blueness  = 0;
@@ -37,7 +41,7 @@ define(['etc/Canvas', 'etc/Audio'], function(Canvas, Audio){
     this.setupAudio();
     this.setupAudioControls();
     this.setupScoreboard();
-    this.start();
+    $(this.audio_file).trigger('play');
   };
 
   MusicPath.prototype.setupPathCanvas = function()
@@ -51,6 +55,7 @@ define(['etc/Canvas', 'etc/Audio'], function(Canvas, Audio){
     this.initCanvas();
     this.initMouse();
     this.initDynamicCanvas();
+    this.ch2 = this.canvas.height * 2;
   };
 
   MusicPath.prototype.setupAudio = function()
@@ -77,6 +82,13 @@ define(['etc/Canvas', 'etc/Audio'], function(Canvas, Audio){
       that.start();
     });
     $(this.audio_file).on('seeked', function(){});
+    $('.display, .path').on('mousedown', function(){
+      if(that.rendering){
+        $(that.audio_file).trigger('pause');
+      } else {
+        $(that.audio_file).trigger('play');
+      }
+    });
   };
 
   MusicPath.prototype.setupScoreboard = function()
@@ -93,12 +105,10 @@ define(['etc/Canvas', 'etc/Audio'], function(Canvas, Audio){
 
   MusicPath.prototype.renderMountain = function(){
 
-
-      //window.requestAnimationFrame(this.renderMountain.bind(this));
     this.audioAnalyser.getByteFrequencyData(this.audioDataArray);
     this.ctx.fillStyle = 'rgba(0,0,0,0.3)';
     this.ctx.clearRect(0,0,this.canvas.width, this.canvas.height);
-    this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+    this.ctx.fillRect(0,0,this.canvas.width, this.canvas.height);
 
     this._drawMouse();
 
@@ -113,8 +123,8 @@ define(['etc/Canvas', 'etc/Audio'], function(Canvas, Audio){
       var barHeight = canvasHeight * percent * .4;
       var barOffset = canvasHeight - barHeight - 1;
       this.ctx.fillStyle = 'rgb(' + (255-value) + ', ' + (255-value) + ',255)';
-      this.ctx.fillRect(canvasMid + (i * barWidth), barOffset-35, barWidth, barHeight+35);
-      this.ctx.fillRect(canvasMid - (i * barWidth), barOffset-35, barWidth, barHeight+35);
+      this.ctx.fillRect(canvasMid + (i * barWidth), barOffset-15, barWidth, barHeight+15);
+      this.ctx.fillRect(canvasMid - (i * barWidth), barOffset-15, barWidth, barHeight+15);
 
       if(value > 10){
         var fwHeight = canvasHeight * percent;
@@ -140,7 +150,7 @@ define(['etc/Canvas', 'etc/Audio'], function(Canvas, Audio){
         if(r_d < this.r_bucket){
           var rb_diff = memory.b - memory.r;
           if(rb_diff > 0){
-            this.blueness += rb_diff;
+            this.bucket += rb_diff/255;
           }
           alive = true;
           this.memory.splice(x,1);
@@ -149,8 +159,9 @@ define(['etc/Canvas', 'etc/Audio'], function(Canvas, Audio){
         this.ctx.strokeStyle = 'rgba(' +memory.r+ ','+memory.g+','+memory.b+','+memory.a+')';
 
         memory.y -= this.canvas.height/this.weight;
-        memory.r += Math.ceil(255/this.weight);
-        memory.g += Math.ceil(255/this.weight);
+        var dt = this.canvas.height - memory.y;
+        memory.r += Math.ceil(255*dt/this.canvas.height/20);
+        memory.g += Math.ceil(255*dt/this.canvas.height/20);
 
         this.ctx.moveTo(memory.x + memory.ox,memory.y + memory.oy);
         this.ctx.lineTo(memory.x + memory.ox,memory.y + memory.oy + 5);
@@ -160,8 +171,17 @@ define(['etc/Canvas', 'etc/Audio'], function(Canvas, Audio){
     this.step ++;
 
     if(!alive){
+      this.bucket -= 100;
+    }
+    if(this.bucket >= this.f_bucket){ // count points when buckets full.
+      this.bucket = this.f_bucket;
+      this.blueness ++;
+    } else if(this.bucket <= 0){  //  reset if bucket empties
+      this.bucket = 0;
       this.blueness = 0;
     }
+
+
     this.currentScore.text(this.blueness);
     if(this.blueness > this.highScore.text()){
       this.highScore.text(this.blueness);
@@ -170,8 +190,17 @@ define(['etc/Canvas', 'etc/Audio'], function(Canvas, Audio){
 
   MusicPath.prototype._drawMouse = function()
   {
-    this.ctx.moveTo(this.mpX, this.mpY);
-    this.ctx.arc();
+    var life = this.bucket/this.f_bucket;
+    var r = 0, g = Math.floor(122 * life), b = Math.floor(200 * life);
+
+    this.ctx.moveTo(this.mpX + this.r_bucket, this.mpY);
+    this.ctx.strokeStyle = 'rgba(255,255,255,'+ (life + 0.2) +')';
+    this.ctx.lineWidth = 2;
+    this.ctx.fillStyle = 'rgba('+r+','+ g+','+b+','+life+')';
+    this.ctx.arc(this.mpX, this.mpY, this.r_bucket, 0, Math.PI * 2);
+    this.ctx.fill();
+    this.ctx.stroke();
+    this.ctx.lineWidth = 1;
   };
 
 

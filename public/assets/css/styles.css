@@ -394,6 +394,9 @@ body {
 #musicpath.music-page {
   height: 100%;
 }
+#musicpath .display canvas {
+  cursor: none;
+}
 #musicpath .display,
 #musicpath .path {
   position: relative;

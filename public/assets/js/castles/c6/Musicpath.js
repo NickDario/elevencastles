@@ -55,7 +55,6 @@ define(['etc/Canvas', 'etc/Audio'], function(Canvas, Audio){
     this.initCanvas();
     this.initMouse();
     this.initDynamicCanvas();
-    this.ch2 = this.canvas.height * 2;
   };
 
   MusicPath.prototype.setupAudio = function()
@@ -82,7 +81,7 @@ define(['etc/Canvas', 'etc/Audio'], function(Canvas, Audio){
       that.start();
     });
     $(this.audio_file).on('seeked', function(){});
-    $('.display, .path').on('mousedown', function(){
+    $('canvas').on('mousedown', function(){
       if(that.rendering){
         $(that.audio_file).trigger('pause');
       } else {

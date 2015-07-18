@@ -20,13 +20,10 @@ define(function(){
     /**
      * Gets this vector
      *
-     * @returns {{x: *, y: *}}
+     * @returns VectorND
      */
     VectorND.prototype.getVector = function(){
-        return {
-            x:this._x,
-            y:this._y
-        }
+        return new VectorND(this._x, this._y);
     };
 
     /**

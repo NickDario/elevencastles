@@ -314,7 +314,7 @@ function(Canvas, VectorND, Vehicle, Plant){
                 continue;
             } else if(this.vehicles[i].ttd < this.vehicles[i].adl){
                 if(Math.random() * this.vehicles[i].repr > this.vehicles[i].repr - 1){
-                    for(var k=0; k < this.vehicles[i].getGene('spawn'); k ++){
+                    for(var k=0; k < Math.floor(this.vehicles[i].getGene('spawn')); k ++){
                         this.vehicles[i].energy *= 0.8;
                         this.vehicles.push(this.vehicles[i].reproduce());
                         vl ++;

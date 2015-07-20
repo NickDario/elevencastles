@@ -17,9 +17,11 @@ define(['etc/CanvasGL', 'etc/Audio'], function(CanvasGL, Audio) {
   $.extend(MP2.prototype, CanvasGL.prototype);
   $.extend(MP2.prototype, Audio.prototype);
 
-  MP2.prototype.init = function()
-  {
+  MP2.prototype.init = function(){
     this.initCanvasGL();
+    this.initShaders();
+    this.initBuffers();
+    this.drawScene();
   };
 
 

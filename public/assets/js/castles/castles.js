@@ -24,6 +24,16 @@ define(['../jquery.min'], function(jquery){
         });
     });
 
+    $('[data-script="musicpath2"]').each(function(){
+        require(['c6/Musicpath2'], function(MP2){
+            var mp = new MP2({
+              canvas_id:'mp2-canvas',
+              audio_id :'mp2-audio'
+            });
+            mp.init();
+        });
+    });
+
     $('[data-script="pursue-and-flee"]').each(function(){
         require(['c8/pnf/PNF'], function(PNF){
             console.log('__pursue-and-flee__');
@@ -42,14 +52,14 @@ define(['../jquery.min'], function(jquery){
             }).init();
 
             $('.pp', controls).on('click', function(e){
-                e.preventDefault();
-                $(this).toggleClass('paused');
-                $(this).find('span').toggle();
-                if($(this).hasClass('paused')){
-                    vehicles.stop();
-                } else{
-                    vehicles.start();
-                }
+              e.preventDefault();
+              $(this).toggleClass('paused');
+              $(this).find('span').toggle();
+              if($(this).hasClass('paused')) {
+                vehicles.stop();
+              } else {
+                vehicles.start();
+              }
             });
 
             $('.info', controls).on('click', function(){

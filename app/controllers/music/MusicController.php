@@ -16,6 +16,11 @@ class MusicController extends BaseController{
             'type'  => 'interactive',
             'url'   => URL::to('C6/musicpath')
         );
+        $rooms[] = array(
+            'title' => 'musicpath2',
+            'type'  => 'interactive',
+            'url'   => URL::to('C6/musicpath2')
+        );
 
         return View::make('music.index', array(
             'rooms' => $rooms,
@@ -33,4 +38,13 @@ class MusicController extends BaseController{
         ));
     }
 
+    public function showMusicpath2()
+    {
+//        $assets['audio']['wav'][] = 'Rhapsody_in_Blue';
+        $assets['audio']['mp3'][] = 'Fur_Elise';
+        return View::make('music.musicpath2', array(
+            'assets' => $assets,
+            'sidebar_title' => 'MusicPath2'
+        ));
+    }
 }

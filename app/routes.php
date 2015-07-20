@@ -35,6 +35,7 @@ Route::get('/C5/quotecomparisons', 'FilmController@showQuoteComparisons');
 
 Route::get('/C6', 'MusicController@showIndex');
 Route::get('/C6/musicpath', 'MusicController@showMusicpath');
+Route::get('/C6/musicpath2', 'MusicController@showMusicpath2');
 
 Route::get('/C7', 'RPController@showMusicpath');
 

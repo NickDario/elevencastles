@@ -429,6 +429,19 @@ body {
 #musicpath .scoreboard span {
   display: block;
 }
+#musicpath2.music-page {
+  height: 100%;
+}
+#musicpath2 .display {
+  position: relative;
+  overflow-y: auto;
+  height: 100%;
+  width: 100%;
+}
+#musicpath2 .source {
+  position: absolute;
+  z-index: 10;
+}
 #pnf.pnf-page {
   height: 100%;
 }

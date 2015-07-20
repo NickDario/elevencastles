@@ -1,0 +1,41 @@
+#musicpath{
+  &.music-page{
+    height:100%;
+  }
+  & .display{
+    canvas{
+      cursor: none;
+    }
+  }
+  & .display, .path{
+    position:relative;
+    overflow-y:auto;
+    height:100%;
+    width:100%;
+    .scoreboard{
+      transition-duration: 0.5s;
+      -webkit-transition-duration: 0.5s;
+      opacity:0;
+    }
+    &:hover{
+      .scoreboard{
+        opacity:1;
+      }
+    }
+  }
+  & .source{
+    position:absolute;
+    z-index:10;
+  }
+  & .scoreboard{
+    position:absolute;
+    right: 25px;
+    top:25px;
+    font-size: 40px;
+    color:blue;
+    font-family: "Helvetica Neue Light", "HelveticaNeue-Light", "Helvetica Neue", Calibri, Helvetica, Arial, sans-serif;
+    & span{
+      display:block;
+    }
+  }
+}

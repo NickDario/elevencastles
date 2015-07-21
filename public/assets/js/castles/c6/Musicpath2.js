@@ -24,6 +24,7 @@ define(['etc/CanvasGL', 'etc/Audio'], function(CanvasGL, Audio) {
 
     var that = this;
     setInterval(that.drawScene.bind(this), 15);
+    //this.drawScene();
   };
 
 

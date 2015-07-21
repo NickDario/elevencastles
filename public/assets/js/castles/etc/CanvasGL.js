@@ -9,7 +9,7 @@ define(['etc/Sylvestor'], function(){
     this.canvas = null;
     this.ctx = null;
 
-    this.squareRotation = 0.0;
+    this.cubeRotation = 0.0;
     this.lastSquareUpdateTime = null;
     this.mvMatrixStack = [];
 
@@ -125,28 +125,85 @@ define(['etc/Sylvestor'], function(){
   };
 
   CanvasGL.prototype.initBuffers = function() {
-    squareVerticesBuffer = this.ctx.createBuffer();
-    this.ctx.bindBuffer(this.ctx.ARRAY_BUFFER, squareVerticesBuffer);
+    cubeVerticesBuffer = this.ctx.createBuffer();
+    this.ctx.bindBuffer(this.ctx.ARRAY_BUFFER, cubeVerticesBuffer);
 
     var vertices = [
-      1.0,  1.0,  0.0,
-      -1.0, 1.0,  0.0,
-      1.0,  -1.0, 0.0,
-      -1.0, -1.0, 0.0
+        //  Front Face
+        -1.0, -1.0, 1.0,
+         1.0, -1.0, 1.0,
+         1.0,  1.0, 1.0,
+        -1.0,  1.0, 1.0,
+
+        //  Back face
+       -1.0, -1.0, -1.0,
+       -1.0,  1.0, -1.0,
+        1.0,  1.0, -1.0,
+        1.0, -1.0, -1.0,
+
+        //  Top face
+       -1.0,  1.0, -1.0,
+       -1.0,  1.0,  1.0,
+        1.0,  1.0,  1.0,
+        1.0,  1.0, -1.0,
+
+        //  Bottom face
+       -1.0, -1.0, -1.0,
+        1.0, -1.0, -1.0,
+        1.0, -1.0,  1.0,
+       -1.0, -1.0,  1.0,
+
+        //  Right face
+        1.0, -1.0, -1.0,
+        1.0,  1.0, -1.0,
+        1.0,  1.0,  1.0,
+        1.0, -1.0,  1.0,
+
+        //  Left face
+       -1.0, -1.0, -1.0,
+       -1.0, -1.0,  1.0,
+       -1.0,  1.0,  1.0,
+       -1.0,  1.0, -1.0
     ];
 
     this.ctx.bufferData(this.ctx.ARRAY_BUFFER, new Float32Array(vertices), this.ctx.STATIC_DRAW);
 
     var colors = [
-      1.0, 1.0, 1.0, 1.0,
-      1.0, 0.0, 0.0, 1.0,
-      0.0, 1.0, 0.0, 1.0,
-      0.0, 0.0, 1.0, 1.0
+      [1.0, 1.0, 1.0, 1.0], //  Front white
+      [1.0, 0.0, 0.0, 1.0], //  Back red
+      [0.0, 1.0, 0.0, 1.0], //  Top green
+      [0.0, 0.0, 1.0, 1.0], //  Bottom red
+      [1.0, 1.0, 0.0, 1.0], //  Bottom yellow
+      [1.0, 0.0, 1.0, 1.0]  //  Bottom purple
     ];
 
-    squareVerticesColorBuffer = this.ctx.createBuffer();
-    this.ctx.bindBuffer(this.ctx.ARRAY_BUFFER, squareVerticesColorBuffer);
-    this.ctx.bufferData(this.ctx.ARRAY_BUFFER, new Float32Array(colors), this.ctx.STATIC_DRAW);
+    var generatedColors = [];
+
+    for(var j=0; j<6; j++) {
+      var c = colors[j];
+      for(var i=0; i<4; i++) {
+        generatedColors = generatedColors.concat(c);
+      }
+    }
+
+    cubeVerticesColorBuffer = this.ctx.createBuffer();
+    this.ctx.bindBuffer(this.ctx.ARRAY_BUFFER, cubeVerticesColorBuffer);
+    this.ctx.bufferData(this.ctx.ARRAY_BUFFER, new Float32Array(generatedColors), this.ctx.STATIC_DRAW);
+
+    cubeVerticesIndexBuffer = this.ctx.createBuffer();
+    this.ctx.bindBuffer(this.ctx.ELEMENT_ARRAY_BUFFER, cubeVerticesIndexBuffer);
+
+    var cubeVertexIndices = [
+        0, 1, 2,    0, 2, 3, // Front
+        4, 5, 6,    4, 6, 7, // Back
+        8, 9, 10,   8, 10, 11, // Top
+        12, 13, 14, 12, 14, 15,
+        16, 17, 18, 16, 18, 19,
+        20, 21, 22, 20, 22, 23
+    ];
+
+    this.ctx.bufferData(this.ctx.ELEMENT_ARRAY_BUFFER, new Uint16Array(cubeVertexIndices), this.ctx.STATIC_DRAW)
+
   };
 
   CanvasGL.prototype.drawScene = function() {
@@ -155,27 +212,29 @@ define(['etc/Sylvestor'], function(){
     perspectiveMatrix = makePerspective(45, this.canvas.width/this.canvas.height, 0.1, 100.0);
 
     this.loadIdentity();
-    this.mvTranslate([0.0, 0.0, -6.0]);
+    this.mvTranslate([-0.0, 0.0, -9.0]);
 
     this.mvPushMatrix();
-    this.mvRotate(this.squareRotation, [1, 0, 0]);
+    this.mvRotate(this.cubeRotation, [1, 8, 1]);
     //this.mvTranslate([this.squareXOffset, this.squareYOffset, this.squareZOffset]);
 
-    this.ctx.bindBuffer(this.ctx.ARRAY_BUFFER, squareVerticesBuffer);
+    this.ctx.bindBuffer(this.ctx.ARRAY_BUFFER, cubeVerticesBuffer);
     this.ctx.vertexAttribPointer(vertexPositionAttribute, 3, this.ctx.FLOAT, false, 0, 0);
-    this.ctx.bindBuffer(this.ctx.ARRAY_BUFFER, squareVerticesColorBuffer);
+
+    this.ctx.bindBuffer(this.ctx.ARRAY_BUFFER, cubeVerticesColorBuffer);
     this.ctx.vertexAttribPointer(vertexColorAttribute, 4, this.ctx.FLOAT, false, 0, 0);
 
+    this.ctx.bindBuffer(this.ctx.ELEMENT_ARRAY_BUFFER, cubeVerticesIndexBuffer);
     this.setMatrixUniforms();
-    this.ctx.drawArrays(this.ctx.TRIANGLE_STRIP, 0, 4);
 
+    this.ctx.drawElements(this.ctx.TRIANGLES, 36, this.ctx.UNSIGNED_SHORT, 0);
     this.mvPopMatrix();
 
     var currentTime = (new Date).getTime();
     if(this.lastSquareUpdateTime){
       var delta = currentTime - this.lastSquareUpdateTime;
 
-      this.squareRotation += (30*delta) / 1000.0;
+      this.cubeRotation += (30*delta) / 1000.0;
       this.squareXOffset += this.xIncValue * ((30*delta) / 1000.0);
       this.squareYOffset += this.yIncValue * ((30*delta) / 1000.0);
       this.squareZOffset += this.zIncValue * ((30*delta) / 1000.0);

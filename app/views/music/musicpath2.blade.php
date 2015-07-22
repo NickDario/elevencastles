@@ -25,14 +25,6 @@
             <canvas id="mp2-canvas"></canvas>
         </div>
 
-        <script id="shader-fs" type="x-shader/x-fragment">
-          varying lowp vec4 vColor;
-
-          void main(void) {
-            gl_FragColor = vColor;
-          }
-        </script>
-
         <script id="shader-vs" type="x-shader/x-vertex">
           attribute vec3 aVertexPosition;
           attribute vec4 aVertexColor;
@@ -43,8 +35,16 @@
           varying lowp vec4 vColor;
 
           void main(void) {
-            gl_Position = uPMatrix * uMVMatrix * vec4(aVertexPosition, 1.0);
+            gl_Position = aVertexPosition;
+            {{--gl_Position = uPMatrix * uMVMatrix * vec4(aVertexPosition, 1.0);--}}
             vColor = aVertexColor;
+          }
+        </script>
+
+        <script id="shader-fs" type="x-shader/x-fragment">
+          varying lowp vec4 vColor;
+          void main(void) {
+            gl_FragColor = vColor;
           }
         </script>
     </div>

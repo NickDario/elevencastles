@@ -28,7 +28,21 @@ define(['../jquery.min'], function(jquery){
         require(['c6/Musicpath2'], function(MP2){
             var mp = new MP2({
               canvas_id:'mp2-canvas',
-              audio_id :'mp2-audio'
+              audio_id :'mp2-audio',
+              vsSrc : "                   \
+                attribute vec4 aPosition; \
+                void main() {             \
+                   gl_Position = aPosition;\
+                   gl_PointSize = 10.0;   \
+                }                         \
+              ",
+              fsSrc : "                   \
+                precision mediump float;  \
+                uniform vec4 uFragColor;  \
+                void main () {            \
+                  gl_FragColor = uFragColor;\
+                }                         \
+              "
             });
             mp.init();
         });

@@ -21,6 +21,8 @@ define(['etc/Sylvestor'], function(Sylvestor){
     this.attributes = {};
     this.uniforms = {};
 
+    this.step = 0;
+
 
     return this;
   };
@@ -46,12 +48,14 @@ define(['etc/Sylvestor'], function(Sylvestor){
     if(!this.ctx.getProgramParameter(this.program, this.ctx.LINK_STATUS)){
       alert('Unable to initialize shader program');
     }
-
     this.ctx.useProgram(this.program);
-    this._initShaderVars();
 
+    this._setAttributes(this.program);
+    this._setUniforms(this.program);
 
-  console.log('pause');
+    this._clearCanvas();
+    var that = this;
+    setInterval(that.draw.bind(this), 15);
   };
 
   CanvasGL.prototype._initCanvasCtxContainer = function(){
@@ -73,18 +77,25 @@ define(['etc/Sylvestor'], function(Sylvestor){
     }
   };
 
-  CanvasGL.prototype._initShaderVars = function(){
-    var numAttributes = this.ctx.getProgramParameter(this.program, this.ctx.ACTIVE_ATTRIBUTES);
-    for (var i=0; i<numAttributes; i++) {
-      var nameAttrib = this.ctx.getActiveAttrib(this.program, i).name;
-      this.attributes[nameAttrib] = this.ctx.getAttribLocation(this.program, nameAttrib);
+  CanvasGL.prototype._setUniforms = function(program) {
+    var numUniforms = this.ctx.getProgramParameter(program, this.ctx.ACTIVE_UNIFORMS);
+    for (var i=0; i<numUniforms; i++) {
+      var nameUniform = this.ctx.getActiveUniform(program, i).name;
+      this.uniforms[nameUniform] = this.ctx.getUniformLocation(program, nameUniform);
     }
+  };
 
-    var numUniforms = this.ctx.getProgramParameter(this.program, this.ctx.ACTIVE_UNIFORMS);
-    for (i=0; i<numUniforms; i++){
-      var nameUniform = this.ctx.getActiveUniform(this.program, i).name;
-      this.uniforms[nameUniform] = this.ctx.getUniformLocation(this.program, nameUniform);
+  CanvasGL.prototype._setAttributes = function(program) {
+    var numAttributes = this.ctx.getProgramParameter(program, this.ctx.ACTIVE_ATTRIBUTES);
+    for (var i=0; i<numAttributes; i++) {
+      var nameAttrib = this.ctx.getActiveAttrib(program, i).name;
+      this.attributes[nameAttrib] = this.ctx.getAttribLocation(program, nameAttrib);
     }
+  };
+
+  CanvasGL.prototype._clearCanvas = function() {
+    this.ctx.clearColor(0.0, 0.0, 0.0, 1.0);
+    this.ctx.clear(this.ctx.COLOR_BUFFER_BIT);
   };
 
   CanvasGL.prototype.buildInShader = function(ctx, type, shaderSrc) {
@@ -100,12 +111,68 @@ define(['etc/Sylvestor'], function(Sylvestor){
     return shader;
   };
 
-  CanvasGL.prototype.initBuffer = function(){
-
+  //  When binding multiple buffers to program.
+  CanvasGL.prototype.initBuffer = function(data, elemPerVertx, attribute) {
+    var buffer = this.ctx.createBuffer();
+    if( !buffer ) throw new Error('Failed to create buffer.');
+    this.ctx.bindBuffer(this.ctx.ARRAY_BUFFER, buffer);
+    this.ctx.bufferData(this.ctx.ARRAY_BUFFER, data, this.ctx.STATIC_DRAW);
+    this.ctx.vertexAttribPointer(attribute, elemPerVertx, this.ctx.FLOAT, false, 0, 0);
+    this.ctx.enableVertexAttribArray(attribute);
   };
 
-  CanvasGL.prototype.initShader = function(){
+  CanvasGL.prototype.draw = function()
+  {
+    this.step += 0.01;
+    if(this.step > 0.1) this.step = 0;
+    //  Interleaving
+    var data = [];
+    for(var x = 0; x < Math.PI * 6; x += 0.1){
+      var r = Math.sin(x);
+      var g = Math.cos(x);
+      var b = Math.sin(x/Math.PI);
+      var h = Math.sin(x + this.step);
+      var w = ((x+this.step) / (Math.PI * 2) - 1);
+      var size = 10;
+      var z = Math.cos(x);
+      data = data.concat([w,h,z,size,r,g,b]);
+    }
+    var fData = new Float32Array(data);
+    var bpe = fData.BYTES_PER_ELEMENT;
+    var buffer = this.ctx.createBuffer();
+    if( !buffer) throw new Error('Failed to create buffer');
+    this.ctx.bindBuffer(this.ctx.ARRAY_BUFFER, buffer);
+    this.ctx.bufferData(this.ctx.ARRAY_BUFFER, fData, this.ctx.STATIC_DRAW);
+    this.ctx.vertexAttribPointer(this.attributes.aPosition, 3, this.ctx.FLOAT, false, 7 * bpe, 0);
+    this.ctx.enableVertexAttribArray(this.attributes.aPosition);
+    this.ctx.vertexAttribPointer(this.attributes.aPointSize, 1, this.ctx.FLOAT, false, 7 * bpe, 3 * bpe);
+    this.ctx.enableVertexAttribArray(this.attributes.aPointSize);
+    this.ctx.vertexAttribPointer(this.attributes.aColor, 3, this.ctx.FLOAT, false, 7 * bpe, 4 * bpe);
+    this.ctx.enableVertexAttribArray(this.attributes.aColor);
 
+    /** @todo
+     *  Textures
+     *  z-index (perspective camera?)
+     *
+     **/
+
+    // Multiple
+    //var fPositions = new Float32Array(positions);
+    //var fColors = new Float32Array(colors);
+    //var fSizes = new Float32Array(sizes);
+    //this.initBuffer(fPositions, 2, this.attributes.aPosition);
+    //this.initBuffer(fColors, 3, this.attributes.aPointSize);
+    //this.initBuffer(fSizes, 1, this.attributes.aColor);
+
+
+    //points.push({x : 0.0, y : 0.5, sz: 10.0, r: 1.0, g: 0.0, b: 0.0});
+
+    //for(var i=0; i < points.length; i++) {
+    //  this.ctx.vertexAttrib4f(this.attributes.aPosition, points[i].x, points[i].y, 0.0, 1.0);
+    //  this.ctx.vertexAttrib1f(this.attributes.aPointSize, points[i].sz);
+    //  this.ctx.vertexAttrib3f(this.attributes.aColor, points[i].r, points[i].g, points[i].b);
+    //}
+    this.ctx.drawArrays(this.ctx.POINTS, 0, data.length / 7);
   };
 
 

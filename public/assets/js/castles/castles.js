@@ -29,19 +29,25 @@ define(['../jquery.min'], function(jquery){
             var mp = new MP2({
               canvas_id:'mp2-canvas',
               audio_id :'mp2-audio',
-              vsSrc : "                   \
-                attribute vec4 aPosition; \
-                void main() {             \
-                   gl_Position = aPosition;\
-                   gl_PointSize = 10.0;   \
-                }                         \
+              vsSrc : "                     \
+                attribute vec4 aPosition;   \
+                attribute float aPointSize; \
+                attribute vec4 aColor;      \
+                varying vec4 vColor;        \
+                \
+                void main() {               \
+                   gl_Position = aPosition; \
+                   gl_PointSize = aPointSize;\
+                   vColor = aColor;         \
+                }                           \
               ",
-              fsSrc : "                   \
-                precision mediump float;  \
-                uniform vec4 uFragColor;  \
-                void main () {            \
-                  gl_FragColor = uFragColor;\
-                }                         \
+              fsSrc : "                     \
+                precision mediump float;    \
+                varying vec4 vColor;        \
+                \
+                void main () {              \
+                  gl_FragColor = vColor;    \
+                }                           \
               "
             });
             mp.init();

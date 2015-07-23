@@ -1,0 +1,61 @@
+html,body{
+  height:100%;
+}
+
+#project-{
+  &container{
+    background-color: #000000;
+    background-image: url("../images/black-linen-2.png");
+    /*background: url("../images/black-linen-2.png") center;*/
+    height:100%;
+    position:fixed;
+    width:100%;
+  }
+  &presentation-container{
+    background-color:rgba(0, 0, 0, .2);
+    @shadow : 0 5px 30px -5px darken(@primary, 30%);
+    .box-shadow(@shadow:@shadow);
+    height:100%;
+  }
+  &content{
+    min-height: 500px;
+    height:100%;
+    color:white;
+    float:right;
+  }
+  &-navigation{
+    position:fixed;
+    left:0;
+    height: 100%;
+    width: 160px;
+    background: #000;
+  }
+  &-controls{
+    z-index: 100;
+    position: absolute;
+    top: 25px;
+    left: 25px;
+    & > .btn-ctrl{
+      transition-duration: .1s;
+      margin-left: 25px;
+      width: 100px;
+      padding:5px 7px;
+      background:@primary-dark;
+      color:white;
+      text-decoration: none;
+      border: 1px solid transparent;
+      cursor: pointer;
+      display: inline-block;
+      text-align: center;
+      &:hover{
+        border: 1px solid white;
+        box-shadow: 0 0 30px -5px #464646;
+      }
+      &.on, &.paused{
+        border: 1px solid white;
+        box-shadow: 0 0 30px -5px #464646;
+      }
+    }
+  }
+}
+

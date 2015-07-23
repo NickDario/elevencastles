@@ -5,10 +5,8 @@
 <meta name="author" content="Nicholas_Dario">
 
 
-<title>{{$title or '11C'}}</title>
+<title>{{'Castles'}}</title>
 
-{{--<script src="{{ URL::asset('assets/jquery.min.js') }}"></script>--}}
-{{--<script src="{{ URL::asset('assets/jquery-ui.min.js') }}"></script>--}}
 <script data-main="{{URL::asset('assets/js/config.js')}}" src="{{URL::asset('assets/js/require.js')}}"></script>
 
 <link href="{{ URL::asset('assets/bootstrap/dist/css/bootstrap.css') }}" rel="stylesheet">

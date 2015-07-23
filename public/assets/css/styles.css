@@ -13,6 +13,38 @@ html,
 body {
   height: 100%;
 }
+.project {
+  height: 100%;
+}
+.display {
+  position: relative;
+  overflow-y: auto;
+  height: 100%;
+  width: 100%;
+}
+.display .info-pane {
+  padding: 25px 0 50px 0;
+  position: absolute;
+  margin-left: auto;
+  width: 100%;
+  height: 100%;
+}
+.display .info-pane .panel {
+  overflow-y: auto;
+}
+.display .info-pane span.date {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+}
+.display .info-pane p {
+  text-align: justify;
+}
+.display .info-pane .equation {
+  font-weight: bold;
+  font-style: italic;
+  padding: 20px 10px;
+}
 #project-container {
   background-color: #000000;
   background-image: url("../images/black-linen-2.png");
@@ -33,20 +65,30 @@ body {
   color: white;
   float: right;
 }
-#project--navigation {
+#project-navigation {
   position: fixed;
-  left: 0;
-  height: 100%;
-  width: 160px;
-  background: #000;
+  z-index: 1000;
+  top: 25px;
+  left: 25px;
+  background: transparent;
 }
-#project--controls {
+#project-navigation #nav-menu {
+  width: 200px;
+}
+#project-navigation #nav-menu .btn-menu {
+  margin-top: 25px;
+}
+#project-controls {
   z-index: 100;
   position: absolute;
   top: 25px;
-  left: 25px;
+  left: 225px;
+  width: 100%;
 }
-#project--controls > .btn-ctrl {
+#project-controls audio {
+  height: 32px;
+}
+.btn-ctrl {
   transition-duration: .1s;
   margin-left: 25px;
   width: 100px;
@@ -59,14 +101,19 @@ body {
   display: inline-block;
   text-align: center;
 }
-#project--controls > .btn-ctrl:hover {
+.btn-ctrl:hover {
+  text-decoration: none;
+  color: white;
   border: 1px solid white;
   box-shadow: 0 0 30px -5px #464646;
 }
-#project--controls > .btn-ctrl.on,
-#project--controls > .btn-ctrl.paused {
+.btn-ctrl.on,
+.btn-ctrl.paused {
   border: 1px solid white;
   box-shadow: 0 0 30px -5px #464646;
+}
+.btn-menu {
+  width: 150px;
 }
 #blank-main-container {
   height: 100%;
@@ -401,99 +448,4 @@ body {
 #musicpath2 .source {
   position: absolute;
   z-index: 10;
-}
-#pnf.pnf-page {
-  height: 100%;
-}
-#pnf .display {
-  position: relative;
-  overflow-y: auto;
-  height: 100%;
-  width: 100%;
-}
-#pnf .control-bar {
-  position: absolute;
-  top: 25px;
-  left: 25px;
-}
-#pnf .control-bar > .btn-ctrl {
-  transition-duration: .1s;
-  margin-left: 25px;
-  width: 100px;
-  padding: 5px 7px;
-  background: #333333;
-  color: white;
-  text-decoration: none;
-  border: 1px solid transparent;
-  cursor: pointer;
-  display: inline-block;
-  text-align: center;
-}
-#pnf .control-bar > .btn-ctrl:hover {
-  border: 1px solid white;
-  box-shadow: 0 0 30px -5px #464646;
-}
-#pnf .control-bar > .btn-ctrl.on {
-  border: 1px solid white;
-  box-shadow: 0 0 30px -5px #464646;
-}
-.vehicles-page {
-  height: 100%;
-}
-.display {
-  position: relative;
-  overflow-y: auto;
-  height: 100%;
-  width: 100%;
-}
-.display .info-pane {
-  padding: 25px 0 50px 0;
-  position: absolute;
-  margin-left: auto;
-  width: 100%;
-  height: 100%;
-}
-.display .info-pane .panel {
-  overflow-y: auto;
-}
-.display .info-pane span.date {
-  position: absolute;
-  top: 20px;
-  right: 20px;
-}
-.display .info-pane p {
-  text-align: justify;
-}
-.display .info-pane .equation {
-  font-weight: bold;
-  font-style: italic;
-  padding: 20px 10px;
-}
-.control-bar {
-  z-index: 100;
-  position: absolute;
-  top: 25px;
-  left: 25px;
-}
-.control-bar > .btn-ctrl {
-  transition-duration: .1s;
-  margin-left: 25px;
-  width: 100px;
-  padding: 5px 7px;
-  background: #333333;
-  color: white;
-  text-decoration: none;
-  border: 1px solid transparent;
-  cursor: pointer;
-  display: inline-block;
-  text-align: center;
-}
-.control-bar > .btn-ctrl:hover {
-  border: 1px solid white;
-  box-shadow: 0 0 30px -5px #464646;
-}
-.control-bar > .btn-ctrl.on,
-.control-bar > .btn-ctrl.paused {
-  border: 1px solid white;
-  box-shadow: 0 0 30px -5px #464646;
 }

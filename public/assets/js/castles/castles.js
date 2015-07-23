@@ -225,6 +225,24 @@ define(['../jquery.min'], function(jquery){
         $(this).parent().toggleClass('open');
     })
 
+  $('#nav-toggle').on('click', function(){
+    $(this).toggleClass('on');
+    if($(this).hasClass('on')){
+
+    } else {
+
+    }
+  })
+
+  function showMenuItems() {
+
+  }
+
+  function hideMenuItems() {
+
+  }
+
+
 
 
 });

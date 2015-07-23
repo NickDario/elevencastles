@@ -9,7 +9,7 @@
 
 @extends('...layouts.project')
 @section('content')
-    <div id="pnf" class="pnf-page" data-script="pursue-and-flee">
+    <div id="pnf" class="project" data-script="pursue-and-flee">
         <div>
 
         </div>

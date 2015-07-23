@@ -9,11 +9,30 @@
 class CastleController extends BaseController{
 
     public $assets = array();
+    public $projects = array();
 
     public function __construct()
     {
         $this->assets['css'][] = 'styles.css';
         $this->assets['js'][]  = 'castle.js';
+        $this->projects = array(
+            array(
+                'id' => 0,
+                'name' => 'MusicPath'
+            ),
+            array(
+                'id' => 1,
+                'name' => 'MusicPath 2'
+            ),
+            array(
+                'id' => 2,
+                'name' => 'Pursue And Flee'
+            ),
+            array(
+                'id' => 3,
+                'name' => 'Vehicles'
+            ),
+        );
     }
 
     public function showIndex()
@@ -25,28 +44,36 @@ class CastleController extends BaseController{
 
     public function showProject($pid = null)
     {
-        if(is_null($pid)){
+        if(is_null($pid)) {
             $pid = rand(0, 3);
         }
-        switch($pid){
+        switch($pid) {
             case 0:
                 $assets['audio']['wav'][] = 'Rhapsody_in_Blue';
                 return View::make('projects.musicpath', array(
                     'assets' => $assets,
-                    'sidebar_title' => 'MusicPath'
+                    'current' => $this->projects[$pid],
+                    'projects' => $this->projects,
                 ));
                 break;
             case 1:
                 $assets['audio']['mp3'][] = 'Fur_Elise';
                 return View::make('projects.musicpath2', array(
                     'assets' => $assets,
-                    'sidebar_title' => 'MusicPath2'
+                    'current' => $this->projects[$pid],
+                    'projects' => $this->projects,
                 ));
                 break;
             case 2:
-                return View::make('projects.pursueandflee', array());
+                return View::make('projects.pursueandflee', array(
+                    'current' => $this->projects[$pid],
+                    'projects' => $this->projects,
+                ));
             case 3:
-                return View::make('projects.vehiclesiv', array());
+                return View::make('projects.vehiclesiv', array(
+                    'current' => $this->projects[$pid],
+                    'projects' => $this->projects,
+                ));
             default:
                 break;
         }

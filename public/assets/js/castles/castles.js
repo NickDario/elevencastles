@@ -177,8 +177,7 @@ define(['../jquery.min'], function(jquery){
 
 
     $('[data-script="vehiclesiv"]').each(function(){
-      var controls = $('#v4-ctrl');
-      console.log('__vehiclesiii__');
+      var controls = $('#project-controls');
       require(['c8/vehicles4/Vehicles4'], function(Vehicles){
         var vehicles = new Vehicles({
             canvas_id:'vehiclesiv-canvas'
@@ -228,19 +227,33 @@ define(['../jquery.min'], function(jquery){
   $('#nav-toggle').on('click', function(){
     $(this).toggleClass('on');
     if($(this).hasClass('on')){
-
+      $('nav-menu').show();
+      showMenuItem(0);
     } else {
-
+      hideMenuItem($('.btn-menu[id^="project"]').length-1);
     }
-  })
+  });
 
   function showMenuItems() {
+    for(var i = 0; i < 3; i ++) {
+      window.setTimeout(function(){
 
+      }, 100);
+    }
   }
 
-  function hideMenuItems() {
-
+  function showMenuItem(i) {
+    if($('#project-'+i).length == 0) return;
+    $('#project-'+i).addClass('show');
+    window.setTimeout(showMenuItem.bind(this, ++i), 50);
   }
+
+  function hideMenuItem(i) {
+    if($('#project-'+i).length == 0) return;
+    $('#project-'+i).removeClass('show');
+    window.setTimeout(hideMenuItem.bind(this, --i), 50);
+  }
+
 
 
 

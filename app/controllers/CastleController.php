@@ -45,7 +45,7 @@ class CastleController extends BaseController{
     public function showProject($pid = null)
     {
         if(is_null($pid)) {
-            $pid = rand(0, 3);
+            $pid = 3;
         }
         switch($pid) {
             case 0:

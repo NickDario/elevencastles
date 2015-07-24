@@ -76,7 +76,12 @@ body {
   width: 200px;
 }
 #project-navigation #nav-menu .btn-menu {
+  transition-duration: 0.2s;
+  opacity: 0;
   margin-top: 25px;
+}
+#project-navigation #nav-menu .btn-menu.show {
+  opacity: 1;
 }
 #project-controls {
   z-index: 100;
@@ -88,7 +93,8 @@ body {
 #project-controls audio {
   height: 32px;
 }
-.btn-ctrl {
+.btn-ctrl,
+.btn-ctrl:focus {
   transition-duration: .1s;
   margin-left: 25px;
   width: 100px;
@@ -101,19 +107,24 @@ body {
   display: inline-block;
   text-align: center;
 }
-.btn-ctrl:hover {
+.btn-ctrl:hover,
+.btn-ctrl:focus:hover {
   text-decoration: none;
   color: white;
   border: 1px solid white;
   box-shadow: 0 0 30px -5px #464646;
 }
 .btn-ctrl.on,
-.btn-ctrl.paused {
+.btn-ctrl:focus.on,
+.btn-ctrl.paused,
+.btn-ctrl:focus.paused {
+  text-decoration: none;
+  color: white;
   border: 1px solid white;
   box-shadow: 0 0 30px -5px #464646;
 }
 .btn-menu {
-  width: 150px;
+  width: 150px !important;
 }
 #blank-main-container {
   height: 100%;

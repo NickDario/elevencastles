@@ -10,15 +10,16 @@
 @extends('...layouts.project')
 @section('content')
     <div id="musicpath2" class="music-page" data-script="musicpath2">
-
-        <div class="source">
-            @foreach($assets['audio'] as $file_type => $audio_files)
-                @foreach($audio_files as $index => $file)
-                    <audio id="mp2-audio" controls>
-                        <source src="{{URL::asset('assets/audio/'. $file . '.' . $file_type);}}" type="audio/{{$file_type}}"/>
-                    </audio>
+        <div id="project-controls">
+            <div class="source">
+                @foreach($assets['audio'] as $file_type => $audio_files)
+                    @foreach($audio_files as $index => $file)
+                        <audio id="mp2-audio" controls>
+                            <source src="{{URL::asset('assets/audio/'. $file . '.' . $file_type);}}" type="audio/{{$file_type}}"/>
+                        </audio>
+                    @endforeach
                 @endforeach
-            @endforeach
+            </div>
         </div>
 
         <div class="display">

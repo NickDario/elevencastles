@@ -69,7 +69,12 @@ html,body{
     & #nav-menu{
       width: 200px;
       .btn-menu{
+        transition-duration: 0.2s;
+        opacity: 0;
         margin-top:25px;
+        &.show{
+          opacity: 1;
+        }
       }
     }
   }
@@ -85,7 +90,7 @@ html,body{
   }
 }
 
-.btn-ctrl{
+.btn-ctrl, .btn-ctrl:focus{
   transition-duration: .1s;
   margin-left: 25px;
   width: 100px;
@@ -104,11 +109,13 @@ html,body{
     box-shadow: 0 0 30px -5px #464646;
   }
   &.on, &.paused{
+    text-decoration: none;
+    color:white;
     border: 1px solid white;
     box-shadow: 0 0 30px -5px #464646;
   }
 }
 & .btn-menu{
-  width: 150px;
+  width: 150px !important;
 }
 

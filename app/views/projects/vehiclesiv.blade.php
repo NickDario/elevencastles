@@ -10,16 +10,22 @@
 <div id="vehicles" class="project" data-script="vehiclesiv">
     <div id="project-controls">
         <div id="v1-ctrl" class="control-bar">
-            <a class="btn-ctrl" href="{{URL::to('C8/ai')}}">
-                &larr; Back
-            </a>
             <a class="pp btn-ctrl" href="{{URL::to('C8/ai')}}">
                 <span class="pause"><i class="fa fa-pause"></i>&nbsp;Pause</span>
                 <span class="play" style="display:none"><i class="fa fa-play"></i>&nbsp;Play</span>
             </a>
-                <span class="info btn-ctrl noselect">
-                    Info
-                </span>
+          <span class="rendersenses btn-ctrl noselect">
+              Senses
+          </span>
+          <span class="renderspores btn-ctrl noselect">
+              Spores
+          </span>
+          <span class="rendergrid btn-ctrl noselect">
+              Grid
+          </span>
+          <span class="info btn-ctrl noselect">
+              Info
+          </span>
         </div>
     </div>
   <div class="display">

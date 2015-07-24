@@ -9,7 +9,7 @@
 
 @extends('...layouts.project')
 @section('content')
-    <div id="musicpath2" class="music-page" data-script="musicpath2">
+    <div id="musicpath2" class="project" data-script="musicpath2">
         <div id="project-controls">
             <div class="source">
                 @foreach($assets['audio'] as $file_type => $audio_files)

@@ -20,16 +20,16 @@ class CastleController extends BaseController{
                 'id' => 0,
                 'name' => 'MusicPath'
             ),
+//            array(
+//                'id' => 1,
+//                'name' => 'MusicPath 2'
+//            ),
             array(
                 'id' => 1,
-                'name' => 'MusicPath 2'
-            ),
-            array(
-                'id' => 2,
                 'name' => 'Pursue And Flee'
             ),
             array(
-                'id' => 3,
+                'id' => 2,
                 'name' => 'Vehicles'
             ),
         );
@@ -44,8 +44,10 @@ class CastleController extends BaseController{
 
     public function showProject($pid = null)
     {
+        $prompt = false;
         if(is_null($pid)) {
-            $pid = 3;
+            $pid = 2;
+            $prompt = true;
         }
         switch($pid) {
             case 0:
@@ -56,7 +58,7 @@ class CastleController extends BaseController{
                     'projects' => $this->projects,
                 ));
                 break;
-            case 1:
+//            case 1:
                 $assets['audio']['mp3'][] = 'Fur_Elise';
                 return View::make('projects.musicpath2', array(
                     'assets' => $assets,
@@ -64,13 +66,14 @@ class CastleController extends BaseController{
                     'projects' => $this->projects,
                 ));
                 break;
-            case 2:
+            case 1:
                 return View::make('projects.pursueandflee', array(
                     'current' => $this->projects[$pid],
                     'projects' => $this->projects,
                 ));
-            case 3:
+            case 2:
                 return View::make('projects.vehiclesiv', array(
+                    'prompt' => $prompt,
                     'current' => $this->projects[$pid],
                     'projects' => $this->projects,
                 ));

@@ -1,7 +1,7 @@
 
 @extends('...layouts.project')
 @section('content')
-<div id="musicpath" class="music-page" data-script="musicpath">
+<div id="musicpath" class="project" data-script="musicpath">
 
     <div id="project-controls">
         <div class="source">

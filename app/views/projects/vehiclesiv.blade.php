@@ -6,7 +6,7 @@
 
 ?>
 @extends('...layouts.project')
-@section('content')
+@section('content')p
 <div id="vehicles" class="project" data-script="vehiclesiv">
     <div id="project-controls">
         <div id="v1-ctrl" class="control-bar">
@@ -28,16 +28,36 @@
           </span>
         </div>
     </div>
-  <div class="display">
-      <div id="v3-info" class="info-pane col-xs-12" style="display:none">
-          <div class="panel panel-darkgrey col-xs-offset-3 col-xs-6">
-              <h3>Simulation of Sensory Perception and Behavioral Response</h3>
-              <ul class="nav nav-list">
-              </ul>
-          </div>
-      </div>
-      <canvas id="vehiclesiv-canvas">
-      </canvas>
-  </div>
+    <div class="display">
+        <canvas id="vehiclesiv-canvas">
+        </canvas>
+    </div>
+    <div id="project-info">
+        <span class="close-info glyphicon glyphicon-remove"></span>
+        <h1>Vehicles</h1>
+        <br>
+        <p>
+            This project is an attempt to simulate genetic memory. Genetic memory is knowledge that is pass down through
+            a genome. genes that help a creature survive are 'remembered' in future generations, genes that aren't are
+            'forgotten'.
+        </p>
+        <p>
+            This process is simulated by placing 'vehicles' in an environment where they must eat to survive. Vehicles
+            can eat plants or smaller vehicles. Larger vehicles with more senses must eat more to survive.
+        </p>
+        <p>
+            Survival offers more opportunities to breed. breeding allows the continuation of a vehicles genome, and the
+            retention of its genetic memory.
+        </p>
+        <p>
+            A vehicles traits are retained in it's genome as genes. When a vehicle is replicated its genome is copied.
+            during this copy each gene has a chance to change slightly. This variation will be retained in the new vehicle
+            and potentially to vehicles that are replicated from it.
+        </p>
+        <p>
+            Use the controls at the top to pause or play the simulation, view information about vehicle senses, plant
+            spawning (each plant also has a genome) and the grid that is used for optimization.
+        </p>
+    </div>
 </div>
 @stop

@@ -55,12 +55,26 @@ define(['../jquery.min'], function(jquery){
     });
 
     $('[data-script="pursue-and-flee"]').each(function(){
-        require(['c8/pnf/PNF'], function(PNF){
-            console.log('__pursue-and-flee__');
-            var pnf = new PNF({
-                canvas_id:'pnf-canvas'
-            }).init();
+      var controls = $('#project-controls');
+      require(['c8/pnf/PNF'], function(PNF){
+        console.log('__pursue-and-flee__');
+        var pnf = new PNF({
+            canvas_id:'pnf-canvas'
+        }).init();
+
+        $('.pp', controls).on('click', function(e){
+          e.preventDefault();
+          e.stopPropagation();
+          $(this).toggleClass('paused');
+          $(this).find('span').toggle();
+          if($(this).hasClass('paused')){
+            pnf.stop();
+          } else{
+            pnf.start();
+          }
         });
+
+      });
     });
 
     $('[data-script="ai-vehicles"]').each(function(){
@@ -222,7 +236,7 @@ define(['../jquery.min'], function(jquery){
 
     $('.head').on('click', function(){
         $(this).parent().toggleClass('open');
-    })
+    });
 
   $('#nav-toggle').on('click', function(){
     $(this).toggleClass('on');
@@ -234,13 +248,13 @@ define(['../jquery.min'], function(jquery){
     }
   });
 
-  function showMenuItems() {
-    for(var i = 0; i < 3; i ++) {
-      window.setTimeout(function(){
-
-      }, 100);
-    }
-  }
+  $('.info.btn-ctrl').on('click', function(){
+    $(this).toggleClass('on');
+    $('#project-info').show();
+  });
+  $('.close-info').on('click', function(){
+    $('#project-info').hide();
+  });
 
   function showMenuItem(i) {
     if($('#project-'+i).length == 0) return;

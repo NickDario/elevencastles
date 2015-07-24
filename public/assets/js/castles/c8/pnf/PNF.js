@@ -16,6 +16,7 @@ define(['etc/Canvas', 'c8/pnf/Geomorph'], function(Canvas, Geomorph){
 
         this.showvectors = false;
         this.animating   = false;
+      this.init();
     };
 
     PNF.constructor = PNF;
@@ -31,6 +32,8 @@ define(['etc/Canvas', 'c8/pnf/Geomorph'], function(Canvas, Geomorph){
         this.initEventHandlers();
 
         this.start();
+
+      return this;
     };
 
     PNF.prototype.initPlayers = function()

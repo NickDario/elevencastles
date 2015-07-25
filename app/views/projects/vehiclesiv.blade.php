@@ -6,7 +6,7 @@
 
 ?>
 @extends('...layouts.project')
-@section('content')p
+@section('content')
 <div id="vehicles" class="project" data-script="vehiclesiv">
     <div id="project-controls">
         <div id="v1-ctrl" class="control-bar">
@@ -23,7 +23,7 @@
           <span class="rendergrid btn-ctrl noselect">
               Grid
           </span>
-          <span class="info btn-ctrl noselect">
+          <span class="info btn-ctrl noselect on">
               Info
           </span>
         </div>

@@ -60,7 +60,7 @@ define(['../jquery.min'], function(jquery){
         console.log('__pursue-and-flee__');
         var pnf = new PNF({
             canvas_id:'pnf-canvas'
-        }).init();
+        });
 
         $('.pp', controls).on('click', function(e){
           e.preventDefault();
@@ -227,10 +227,6 @@ define(['../jquery.min'], function(jquery){
             vehicles.showSpores = !vehicles.showSpores;
         });
 
-        $('.info', controls).on('click', function(){
-            $(this).toggleClass('on');
-            $('#v3-info').toggle();
-        });
       });
     });
 
@@ -250,9 +246,10 @@ define(['../jquery.min'], function(jquery){
 
   $('.info.btn-ctrl').on('click', function(){
     $(this).toggleClass('on');
-    $('#project-info').show();
+    $('#project-info').toggle();
   });
   $('.close-info').on('click', function(){
+    $('.info.btn-ctrl').removeClass('on');
     $('#project-info').hide();
   });
 
@@ -267,9 +264,4 @@ define(['../jquery.min'], function(jquery){
     $('#project-'+i).removeClass('show');
     window.setTimeout(hideMenuItem.bind(this, --i), 50);
   }
-
-
-
-
-
 });

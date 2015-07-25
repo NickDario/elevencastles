@@ -6,6 +6,10 @@ html,body{
   height: 100%;
 }
 
+canvas{
+  .noselect();
+}
+
 & .display {
   position: relative;
   overflow-y: auto;
@@ -89,6 +93,9 @@ html,body{
     }
   }
   &info{
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    border-radius: 3px;
     background: fade(@primary-dark, 85%);
     color:rgba(255,255,255,1);
     padding: 50px;
@@ -122,6 +129,7 @@ html,body{
   cursor: pointer;
   display: inline-block;
   text-align: center;
+  .noselect();
   &:hover{
     text-decoration: none;
     color: white;

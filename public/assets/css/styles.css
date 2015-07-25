@@ -16,6 +16,21 @@ body {
 .project {
   height: 100%;
 }
+canvas {
+  /* Chrome/Safari */
+  /* Firefox */
+  /* IE10+ */
+  /* Rules below not implemented in browsers yet */
+  -webkit-user-select: none;
+  /* Chrome/Safari */
+  -moz-user-select: none;
+  /* Firefox */
+  -ms-user-select: none;
+  /* IE10+ */
+  /* Rules below not implemented in browsers yet */
+  -o-user-select: none;
+  user-select: none;
+}
 .display {
   position: relative;
   overflow-y: auto;
@@ -94,6 +109,9 @@ body {
   height: 32px;
 }
 #project-info {
+  -webkit-border-radius: 3px;
+  -moz-border-radius: 3px;
+  border-radius: 3px;
   background: rgba(51, 51, 51, 0.85);
   color: #ffffff;
   padding: 50px;
@@ -126,6 +144,19 @@ body {
   cursor: pointer;
   display: inline-block;
   text-align: center;
+  /* Chrome/Safari */
+  /* Firefox */
+  /* IE10+ */
+  /* Rules below not implemented in browsers yet */
+  -webkit-user-select: none;
+  /* Chrome/Safari */
+  -moz-user-select: none;
+  /* Firefox */
+  -ms-user-select: none;
+  /* IE10+ */
+  /* Rules below not implemented in browsers yet */
+  -o-user-select: none;
+  user-select: none;
 }
 .btn-ctrl:hover,
 .btn-ctrl:focus:hover {
@@ -428,4 +459,39 @@ body {
 .nogutter {
   padding-left: 0px;
   padding-right: 0px;
+}
+#musicpath .display canvas {
+  cursor: none;
+}
+#musicpath .display,
+#musicpath .path {
+  position: relative;
+  overflow-y: auto;
+  height: 100%;
+  width: 100%;
+}
+#musicpath .display .scoreboard,
+#musicpath .path .scoreboard {
+  transition-duration: 0.5s;
+  -webkit-transition-duration: 0.5s;
+  opacity: 0;
+}
+#musicpath .display:hover .scoreboard,
+#musicpath .path:hover .scoreboard {
+  opacity: 1;
+}
+#musicpath .source {
+  position: absolute;
+  z-index: 10;
+}
+#musicpath .scoreboard {
+  position: absolute;
+  right: 25px;
+  top: 25px;
+  font-size: 40px;
+  color: blue;
+  font-family: "Helvetica Neue Light", "HelveticaNeue-Light", "Helvetica Neue", Calibri, Helvetica, Arial, sans-serif;
+}
+#musicpath .scoreboard span {
+  display: block;
 }

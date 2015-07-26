@@ -92,28 +92,30 @@ canvas{
       height:32px;
     }
   }
-  &info{
-    -webkit-border-radius: 3px;
-    -moz-border-radius: 3px;
-    border-radius: 3px;
-    background: fade(@primary-dark, 85%);
-    color:rgba(255,255,255,1);
-    padding: 50px;
-    position: absolute;
-    max-width:50%;
-    min-width: 300px;
-    bottom: 100px;
-    top:100px;
-    left:0;
-    right:0;
-    margin:auto;
-    & .close-info{
-      position:absolute;
-      right:50px;
-      top:50px;
-      cursor: pointer;
-      user-select: none;
-    }
+}
+
+.project-overlay{
+  -webkit-border-radius: 3px;
+  -moz-border-radius: 3px;
+  border-radius: 3px;
+  background: fade(@primary-dark, 85%);
+  color:rgba(255,255,255,1);
+  padding: 50px;
+  position: absolute;
+  max-width:50%;
+  min-width: 300px;
+  bottom: 100px;
+  top:100px;
+  left:0;
+  right:0;
+  margin:auto;
+  overflow-y: auto;
+  & .close-overlay{
+    position:absolute;
+    right:50px;
+    top:50px;
+    cursor: pointer;
+    user-select: none;
   }
 }
 

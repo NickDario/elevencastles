@@ -23,8 +23,11 @@
           <span class="rendergrid btn-ctrl noselect">
               Grid
           </span>
-          <span class="info btn-ctrl noselect on">
+          <span class="info btn-overlay btn-ctrl noselect on" data-overlay="info">
               Info
+          </span>
+          <span class="customv btn-overlay btn-ctrl noselect" data-overlay="customv">
+              Vehicle
           </span>
         </div>
     </div>
@@ -32,8 +35,8 @@
         <canvas id="vehiclesiv-canvas">
         </canvas>
     </div>
-    <div id="project-info">
-        <span class="close-info glyphicon glyphicon-remove"></span>
+    <div id="info-overlay" class="project-overlay">
+        <span class="close-overlay glyphicon glyphicon-remove"></span>
         <h1>Vehicles</h1>
         <br>
         <p>
@@ -58,6 +61,55 @@
             Use the controls at the top to pause or play the simulation, view information about vehicle senses, plant
             spawning (each plant also has a genome) and the grid that is used for optimization.
         </p>
+    </div>
+    <div id="customv-overlay" class="project-overlay" style="display: none">
+        <span class="close-overlay glyphicon glyphicon-remove"></span>
+        <h1>Click to create a custom vehicle</h1>
+        <br />
+        <div id="customv-controls">
+        </div>
+        <div id="customv-legend">
+            <p class="customv-info">
+                The rate at which a vehicle decelerates.
+            </p>
+            <p class="customv-info">
+                The rate at which a vehicle accelerates.
+            </p>
+            <p class="customv-info">
+                Acceleration in response to sensing larger vehicles, negative means in the opposite direction.
+            </p>
+            <p class="customv-info">
+                Acceleration in response to sensing smaller vehicles.
+            </p>
+            <p class="customv-info">
+                Acceleration in response to sensing similar sized vehicles.
+            </p>
+            <p class="customv-info">
+                Acceleration in response to sensing fuel.
+            </p>
+            <p class="customv-info">
+                The size of the vehicle.
+            </p>
+            <p class="customv-info">
+                Affects top speed, resting speed, and the rate of energy expendiditure of vehicles (proportinoally).
+            </p>
+            <p class="customv-info">
+                The number of offspring that are produced after reproduction (can have different traits).
+            </p>
+            <p class="customv-info">
+                The number of senses the vehicle has.
+            </p>
+            <p class="customv-info">
+                Amount of red hue in a vehicle.
+            </p>
+            <p class="customv-info">
+                Amount of green hue in a vehicle.
+            </p>
+            <p class="customv-info">
+                Amount of blue hue in a vehicle.
+            </p>
+
+        </div>
     </div>
 </div>
 @stop

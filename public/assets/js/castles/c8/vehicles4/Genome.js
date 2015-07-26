@@ -51,6 +51,15 @@ function(Gene){
         return this.genes[gene] != null ? this.genes[gene].val : 0;
     };
 
+    Genome.prototype.setGene = function(gene, val) {
+      if(this.genes[gene].maxv != null && val > this.genes[gene].maxv) {
+        val = this.genes[gene].maxv;
+      } else if(this.genes[gene].minv && val < this.genes[gene].minv) {
+        val = this.genes[gene].minv;
+      }
+      this.genes[gene].val = val;
+    };
+
     Genome.prototype.mutate = function() {
         for(var i in this.genes){
             this.genes[i].mutate();
@@ -62,6 +71,10 @@ function(Gene){
         g.mutate();
         return g;
     };
+
+    Genome.prototype.copyGenome = function(){
+      return new Genome(this.genes);
+    }
 
     return Genome;
 });

@@ -134,14 +134,14 @@ function(Vector, Genome, Sense)
           acceleration : 1,
           lvehicle : {
             name: 'lvehicle',
-            val : 1,
+            val : -1,
             ms  : 0.5,
             mr  : 50,
             minv: null
           },
           svehicle : {
             name: 'svehicle',
-            val : -1,
+            val : 1,
             ms  : 0.5,
             mr  : 50,
             minv: null
@@ -185,18 +185,24 @@ function(Vector, Genome, Sense)
           },
           rColor : {
             name: 'rColor',
+            minv: 0,
+            maxv: 255,
             val : 20,
             ms : 10,
             mr  : 50,
           },
           gColor : {
             name: 'gColor',
+            minv: 0,
+            maxv: 255,
             val : 125,
             mr  : 50,
             ms : 10
           },
           bColor : {
             name: 'bColor',
+            minv: 0,
+            maxv: 255,
             val : 155,
             mr  : 50,
             ms : 10

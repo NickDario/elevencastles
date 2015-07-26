@@ -1,4 +1,4 @@
-define(['../jquery.min'], function(jquery){
+define(['../jquery.min', '../jquery-ui.min'], function(jquery, jqueryui){
 
     $('[data-script="castle-main"]').each(function(){
         require(['c0/castle'], function(){
@@ -222,10 +222,50 @@ define(['../jquery.min'], function(jquery){
             $(this).toggleClass('on');
             vehicles.showSenses = !vehicles.showSenses;
         });
+
         $('.renderspores', controls).on('click', function(){
             $(this).toggleClass('on');
             vehicles.showSpores = !vehicles.showSpores;
         });
+
+        var genome = vehicles.uv.genes;
+        var custom = $('#customv-controls');
+        for(var g in genome) {
+          var div = document.createElement('div');
+          if(genome[g].type != 'genome') {
+            var slider = document.createElement('div');
+            var title  = document.createElement('span');
+            var value  = document.createElement('span');
+            title.innerText = genome[g].name;
+            value.id = genome[g].name + "-value";
+            value.innerText = genome[g].val;
+            value.className = "customv-counter";
+            div.id = "customv-" + genome[g].name;
+            div.className = 'customv-setting';
+            div.setAttribute('data-name', genome[g].name);
+            div.appendChild(title);
+            div.appendChild(slider);
+            div.appendChild(value);
+            $(slider).slider({
+              max: genome[g].maxv != null ? genome[g].maxv : genome[g].ms * 25 + genome[g].val,
+              min: genome[g].minv != null ? genome[g].minv : genome[g].ms * -25 + genome[g].val,
+              value: genome[g].val,
+              step : genome[g].ms,
+              change: function(e, ui){
+                var p = $(this).parent();
+                $('.customv-counter', p).text(ui.value);
+                vehicles.uv.setGene(p.data('name'), ui.value);
+              }
+            });
+            div.addEventListener('change', function(){
+              console.log('ding');
+            });
+            custom.append(div);
+
+          } else {
+
+          }
+        }
 
       });
     });
@@ -234,34 +274,42 @@ define(['../jquery.min'], function(jquery){
         $(this).parent().toggleClass('open');
     });
 
-  $('#nav-toggle').on('click', function(){
-    $(this).toggleClass('on');
-    if($(this).hasClass('on')){
-      $('nav-menu').show();
-      showMenuItem(0);
+    $('#nav-toggle').on('click', function(){
+      $(this).toggleClass('on');
+      if($(this).hasClass('on')){
+        $('nav-menu').show();
+        showMenuItem(0);
+      } else {
+        hideMenuItem($('.btn-menu[id^="project"]').length-1);
+      }
+    });
+
+    $('.close-overlay').on('click', function(){
+      $('.btn-overlay').removeClass('on');
+      $('.project-overlay').hide();
+    });
+
+  $('.btn-overlay').on('click', function(){
+    var on = $(this).hasClass('on');
+    $('.project-overlay').hide();
+    $('.btn-overlay').removeClass('on');
+    if(on){
+      $(this).remove('on');
     } else {
-      hideMenuItem($('.btn-menu[id^="project"]').length-1);
+      $(this).addClass('on');
+      $('#' + $(this).data('overlay') + '-overlay').show();
     }
   });
 
-  $('.info.btn-ctrl').on('click', function(){
-    $(this).toggleClass('on');
-    $('#project-info').toggle();
-  });
-  $('.close-info').on('click', function(){
-    $('.info.btn-ctrl').removeClass('on');
-    $('#project-info').hide();
-  });
+    function showMenuItem(i) {
+      if($('#project-'+i).length == 0) return;
+      $('#project-'+i).addClass('show');
+      window.setTimeout(showMenuItem.bind(this, ++i), 50);
+    }
 
-  function showMenuItem(i) {
-    if($('#project-'+i).length == 0) return;
-    $('#project-'+i).addClass('show');
-    window.setTimeout(showMenuItem.bind(this, ++i), 50);
-  }
-
-  function hideMenuItem(i) {
-    if($('#project-'+i).length == 0) return;
-    $('#project-'+i).removeClass('show');
-    window.setTimeout(hideMenuItem.bind(this, --i), 50);
-  }
+    function hideMenuItem(i) {
+      if($('#project-'+i).length == 0) return;
+      $('#project-'+i).removeClass('show');
+      window.setTimeout(hideMenuItem.bind(this, --i), 50);
+    }
 });

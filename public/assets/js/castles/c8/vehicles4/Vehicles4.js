@@ -59,7 +59,8 @@ function(Canvas, VectorND, Vehicle, Plant){
     {
       this.vehicles.push(new Vehicle({
         center: new VectorND(x, y),
-        direction : this.uv.direction.getVector()
+        direction : this.uv.direction.getVector(),
+        genome : this.uv.copyGenome()
       }));
     };
 

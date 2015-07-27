@@ -34,6 +34,8 @@ define(['../jquery.min', '../jquery-ui.min'], function(jquery, jqueryui){
                 attribute float aPointSize; \
                 attribute vec4 aColor;      \
                 \
+                attribute float fStep;\
+                attribute float fOffset;\
                 uniform mat4 uModelMatrix;  \
                 uniform mat4 uViewMatrix;   \
                 uniform mat4 uProjMatrix;   \
@@ -41,7 +43,10 @@ define(['../jquery.min', '../jquery-ui.min'], function(jquery, jqueryui){
                 varying vec4 vColor;        \
                 \
                 void main() {               \
-                   gl_Position = uProjMatrix * uViewMatrix * uModelMatrix * aPosition; \
+                   float m = mod((fStep + fOffset), 20.0);\
+                   vec4 p = aPosition + vec4(0.0, 0.0, m, 0.0);\
+                   gl_Position = uProjMatrix * uViewMatrix * uModelMatrix * p; \
+                   \
                    gl_PointSize = aPointSize;\
                    vColor = aColor;         \
                 }                           \

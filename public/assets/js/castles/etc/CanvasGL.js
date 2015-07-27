@@ -1,5 +1,7 @@
 /**
  * Created by ndario on 7/21/15.
+ *
+ *
  */
 
 define(['etc/glMatrix'], function(GM){
@@ -10,6 +12,12 @@ define(['etc/glMatrix'], function(GM){
     this.canvas = null;
     this.container = null;
     this.ctx = null;
+
+    this.mpx = null;
+    this.mpy = null;
+
+    this.camerax = 0;
+    this.cameray = 0;
 
     this.vsSrc = config['vsSrc'];
     this.fsSrc = config['fsSrc'];
@@ -26,11 +34,37 @@ define(['etc/glMatrix'], function(GM){
     this.uniforms = {};
 
     this.step = 0;
+    this.temp = true;
 
+    this.points = [];
+    this.transforms = {
+      //  matrixid : [[x0, y0, z0], [x1, y1, z1]]
+    };
 
     return this;
   };
 
+  CanvasGL.prototype.initEventHandlers = function(){
+    var that = this;
+    document.addEventListener('mousemove', function(e){
+      that.mpx = e.pageX - that.canvas_rect.left;
+      that.mpy = e.pageY - that.canvas_rect.top;
+    });
+
+
+    this.canvas.addEventListener('webglcontextlost', this.handleContextLost, false);
+    this.canvas.addEventListener('webglcontextrestored', this.handleContextRestored, false);
+  };
+
+  CanvasGL.prototype.handleContextLost = function()
+  {
+
+  };
+
+  CanvasGL.prototype.handleContextRestored = function()
+  {
+
+  };
 
   CanvasGL.prototype.initCanvasGL = function(){
     this._initCanvasCtxContainer();
@@ -40,6 +74,8 @@ define(['etc/glMatrix'], function(GM){
       this.ctx.depthFunc(this.ctx.LEQUAL);                                // Near things obscure far things
       this.ctx.clear(this.ctx.COLOR_BUFFER_BIT|this.ctx.DEPTH_BUFFER_BIT);      // Clear the color as well as the depth buffer.
     }
+
+    this.initEventHandlers();
 
     this.vs = this.buildInShader(this.ctx, this.ctx.VERTEX_SHADER, this.vsSrc);
     this.fs = this.buildInShader(this.ctx, this.ctx.FRAGMENT_SHADER, this.fsSrc);
@@ -68,19 +104,21 @@ define(['etc/glMatrix'], function(GM){
     this.ctx.uniformMatrix4fv(this.uniforms.uViewMatrix, false, this.viewMatrix);
 
     this.projMatrix = GM.mat4.create();
-    GM.mat4.perspective(this.projMatrix, 45 * Math.PI / 180, this.canvas.width /this.canvas.height, -10, 10);
+    GM.mat4.perspective(this.projMatrix, 45 * Math.PI / 180, this.canvas.width / this.canvas.height, 0, 100);
     this.ctx.uniformMatrix4fv(this.uniforms.uProjMatrix, false, this.projMatrix);
 
     this.modelMatrix = GM.mat4.create();
     GM.mat4.identity(this.modelMatrix);
+    //GM.mat4.translate(this.modelMatrix, this.modelMatrix, [0.0, -1.0, -100.0]);
+    GM.mat4.translate(this.modelMatrix, this.modelMatrix, [0.0, -1.0, -10.0]);
+    this.ctx.uniformMatrix4fv(this.uniforms.uModelMatrix, false, this.modelMatrix);
 
-    setInterval(that.draw.bind(this), 15);
+    this.beginDraw();
   };
 
   CanvasGL.prototype.beginDraw = function(){
-    this.modelMatrix = GM.mat4.create();
-    return this.draw.bind(this, modelMatrix);
-  }
+    window.requestAnimationFrame(this.draw.bind(this));
+  };
 
   CanvasGL.prototype._initCanvasCtxContainer = function(){
     this.canvas = document.getElementById(this.canvas_id);
@@ -129,6 +167,7 @@ define(['etc/glMatrix'], function(GM){
     ctx.compileShader(shader);
 
     if(!ctx.getShaderParameter(shader, ctx.COMPILE_STATUS)) {
+      console.log(ctx.getShaderInfoLog(shader));
       throw new Error(ctx.getShaderInfoLog(shader));
     }
 
@@ -145,41 +184,73 @@ define(['etc/glMatrix'], function(GM){
     this.ctx.enableVertexAttribArray(attribute);
   };
 
-  CanvasGL.prototype.draw = function()
-  {
+  CanvasGL.prototype.draw = function() {
     this.ctx.viewport(0, 0, this.canvas.width, this.canvas.height);
-    this._clearCanvas();
+    //this._clearCanvas();
 
-    GM.mat4.rotateY(this.modelMatrix, this.modelMatrix, Math.PI / 180);
+
+    //this.transforms['modelmatrix'].push(this.modelMatrix);
+    var xoff = -((this.mpx / this.canvas.width) - ((this.canvas.width / 2) / this.canvas.width)) / 5;
+    var yoff = ((this.mpy / this.canvas.height) - ((this.canvas.height / 2) / this.canvas.height)) / 5;
+    //if(Math.abs(this.modelMatrix[12] + toff) < Math.PI / 2){
+    //  GM.mat4.translate(this.modelMatrix, this.modelMatrix, [toff, 0, 0]);
+    //}
+    if (Math.abs(this.modelMatrix[12] + xoff) > Math.PI * 3) {
+      xoff = 0;
+    }
+    if (Math.abs(this.modelMatrix[13] + yoff) > 5) {
+      yoff = 0;
+    }
+
+    this.camerax += xoff;
+    this.cameray += yoff;
+
+
+
+    GM.mat4.translate(this.modelMatrix, this.modelMatrix, [xoff, yoff, 0]);
+    //GM.mat4.rotateY(this.modelMatrix, this.modelMatrix, Math.PI / 180);
     this.ctx.uniformMatrix4fv(this.uniforms.uModelMatrix, false, this.modelMatrix);
 
-    this.step += 0.01;
-    if(this.step > 0.1) this.step = 0;
+    this.step += 0.1;
+    if (this.step > 20) this.step = 0;
+
+
+    this.ctx.vertexAttrib1f(this.attributes.fStep, this.step);
+
+  if(this.temp){
+    //
+    //this.step = -(this.mpy % 40) / 400;
     //  Interleaving
-    var data = [];
-    for(var x = 0; x < Math.PI * 16; x += 0.1){
-      var r = Math.sin(x);
-      var g = Math.cos(x);
-      var b = Math.sin(x/Math.PI);
-      var h = Math.sin(x + this.step);
-      var w = ((x+this.step) / (Math.PI * 2) - 4);
+    this.points = [];
+    var i = this.points.length - 1;
+    for (var x = 0; x < Math.PI * 100; x += 0.1) {
+      var h = Math.sin(x) * 2;
+      var r = 0.5;
+      var g = 0.1;
+      var b = 0.1;
+      var w = ((x) / (Math.PI * 2) - 25);
       var size = 3; //Math.abs(Math.cos(x)) * 20;
-      //var z = Math.cos(x) * 2;
       var z = 0;
-      data = data.concat([w,h,z,size,r,g,b]);
+      for(var i = 0; i < 20; i ++){
+        //var z = this.step + i;
+        //var z = Math.cos(x + this.step) * 4;
+        this.points = this.points.concat([w, h, z, size, r, g, b, i]);
+      }
     }
-    var fData = new Float32Array(data);
+    var fData = new Float32Array(this.points);
     var bpe = fData.BYTES_PER_ELEMENT;
     var buffer = this.ctx.createBuffer();
-    if( !buffer) throw new Error('Failed to create buffer');
+    if (!buffer) throw new Error('Failed to create buffer');
     this.ctx.bindBuffer(this.ctx.ARRAY_BUFFER, buffer);
     this.ctx.bufferData(this.ctx.ARRAY_BUFFER, fData, this.ctx.STATIC_DRAW);
-    this.ctx.vertexAttribPointer(this.attributes.aPosition, 3, this.ctx.FLOAT, false, 7 * bpe, 0);
+    this.ctx.vertexAttribPointer(this.attributes.aPosition, 3, this.ctx.FLOAT, false, 8 * bpe, 0);
     this.ctx.enableVertexAttribArray(this.attributes.aPosition);
-    this.ctx.vertexAttribPointer(this.attributes.aPointSize, 1, this.ctx.FLOAT, false, 7 * bpe, 3 * bpe);
+    this.ctx.vertexAttribPointer(this.attributes.aPointSize, 1, this.ctx.FLOAT, false, 8 * bpe, 3 * bpe);
     this.ctx.enableVertexAttribArray(this.attributes.aPointSize);
-    this.ctx.vertexAttribPointer(this.attributes.aColor, 3, this.ctx.FLOAT, false, 7 * bpe, 4 * bpe);
+    this.ctx.vertexAttribPointer(this.attributes.aColor, 3, this.ctx.FLOAT, false, 8 * bpe, 4 * bpe);
     this.ctx.enableVertexAttribArray(this.attributes.aColor);
+    this.ctx.vertexAttribPointer(this.attributes.fOffset, 1, this.ctx.FLOAT, false, 8 * bpe, 7 * bpe);
+    this.ctx.enableVertexAttribArray(this.attributes.fOffset);
 
     //this.ctx.enableVertexAttribArray(this.attributes.uProjMatrix);
     //this.ctx.enableVertexAttribArray(this.attributes.uViewMatrix);
@@ -201,7 +272,10 @@ define(['etc/glMatrix'], function(GM){
     //  this.ctx.vertexAttrib1f(this.attributes.aPointSize, points[i].sz);
     //  this.ctx.vertexAttrib3f(this.attributes.aColor, points[i].r, points[i].g, points[i].b);
     //}
-    this.ctx.drawArrays(this.ctx.POINTS, 0, data.length / 7);
+    this.temp = false;
+  }
+    this.ctx.drawArrays(this.ctx.POINTS, 0, this.points.length / 8);
+    window.requestAnimationFrame(this.draw.bind(this));
   };
 
 

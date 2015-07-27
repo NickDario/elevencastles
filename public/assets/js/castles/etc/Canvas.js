@@ -1,5 +1,20 @@
 define(function(){
 
+  /**
+   *  Class:       CanvasGL
+   *  Description: A prototype class for 2D animation using the html5 canvas.
+   *  Author:      Nicholas Dario
+   *
+   *  Features:
+   *    Regioned element processing.
+   *    Pause and Play functionality.
+   *    Mouse coordinates.
+   *    Simple draw profiling.
+   *
+   *  @todo: optimize javascript.
+   *
+   */
+
     function Canvas(config)
     {
         this.canvas_id = config['canvas_id'] != null ? config['canvas_id'] : 'canvas';

@@ -1,15 +1,20 @@
 #musicpath2{
-  &.music-page{
-    height:100%;
-  }
-  & .display{
-    position:relative;
-    overflow-y:auto;
-    height:100%;
-    width:100%;
-  }
-  & .source{
-    position:absolute;
-    z-index:10;
+  & #loading{
+    position: absolute;
+    width:300px;
+    height:200px;
+    top:0;
+    bottom:0;
+    left:0;
+    right:0;
+    margin:auto;
+    .barBig{
+      width:100%;
+      background-color:@primary;
+      .barGrow{
+        width:0;
+        background-color:@primary-dark;
+      }
+    }
   }
 }

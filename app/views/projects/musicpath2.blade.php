@@ -26,6 +26,13 @@
             <canvas id="mp2-canvas"></canvas>
         </div>
 
+        {{--<div id="loading">--}}
+            {{--<span><span class="num">0</span>%</span>--}}
+            {{--<div class="barBig">--}}
+                {{--<div class="barGrow"></div>--}}
+            {{--</div>--}}
+        {{--</div>--}}
+
         <script id="shader-vs" type="x-shader/x-vertex">
           attribute vec3 aVertexPosition;
           attribute vec4 aVertexColor;

@@ -34,7 +34,7 @@ define(['etc/glMatrix'], function(GM){
     this.uniforms = {};
 
     this.step = 0;
-    this.temp = true;
+    this.loading = true;
 
     this.points = [];
     this.transforms = {
@@ -205,8 +205,6 @@ define(['etc/glMatrix'], function(GM){
     this.camerax += xoff;
     this.cameray += yoff;
 
-
-
     GM.mat4.translate(this.modelMatrix, this.modelMatrix, [xoff, yoff, 0]);
     //GM.mat4.rotateY(this.modelMatrix, this.modelMatrix, Math.PI / 180);
     this.ctx.uniformMatrix4fv(this.uniforms.uModelMatrix, false, this.modelMatrix);
@@ -217,40 +215,22 @@ define(['etc/glMatrix'], function(GM){
 
     this.ctx.vertexAttrib1f(this.attributes.fStep, this.step);
 
-  if(this.temp){
-    //
-    //this.step = -(this.mpy % 40) / 400;
-    //  Interleaving
-    this.points = [];
-    var i = this.points.length - 1;
-    for (var x = 0; x < Math.PI * 100; x += 0.1) {
+  if(this.loading){
+    var max = (Math.PI * 40);
+    for (var x = 0; x < max; x += 0.1) {
+      this.percent = x/max;
       var h = Math.sin(x) * 2;
       var r = 0.5;
       var g = 0.1;
       var b = 0.1;
-      var w = ((x) / (Math.PI * 2) - 25);
+      var w = ((x) / (Math.PI * 2) - 10);
       var size = 3; //Math.abs(Math.cos(x)) * 20;
       var z = 0;
       for(var i = 0; i < 20; i ++){
-        //var z = this.step + i;
-        //var z = Math.cos(x + this.step) * 4;
         this.points = this.points.concat([w, h, z, size, r, g, b, i]);
       }
     }
-    var fData = new Float32Array(this.points);
-    var bpe = fData.BYTES_PER_ELEMENT;
-    var buffer = this.ctx.createBuffer();
-    if (!buffer) throw new Error('Failed to create buffer');
-    this.ctx.bindBuffer(this.ctx.ARRAY_BUFFER, buffer);
-    this.ctx.bufferData(this.ctx.ARRAY_BUFFER, fData, this.ctx.STATIC_DRAW);
-    this.ctx.vertexAttribPointer(this.attributes.aPosition, 3, this.ctx.FLOAT, false, 8 * bpe, 0);
-    this.ctx.enableVertexAttribArray(this.attributes.aPosition);
-    this.ctx.vertexAttribPointer(this.attributes.aPointSize, 1, this.ctx.FLOAT, false, 8 * bpe, 3 * bpe);
-    this.ctx.enableVertexAttribArray(this.attributes.aPointSize);
-    this.ctx.vertexAttribPointer(this.attributes.aColor, 3, this.ctx.FLOAT, false, 8 * bpe, 4 * bpe);
-    this.ctx.enableVertexAttribArray(this.attributes.aColor);
-    this.ctx.vertexAttribPointer(this.attributes.fOffset, 1, this.ctx.FLOAT, false, 8 * bpe, 7 * bpe);
-    this.ctx.enableVertexAttribArray(this.attributes.fOffset);
+    this.updatePoints();
 
     //this.ctx.enableVertexAttribArray(this.attributes.uProjMatrix);
     //this.ctx.enableVertexAttribArray(this.attributes.uViewMatrix);
@@ -272,12 +252,34 @@ define(['etc/glMatrix'], function(GM){
     //  this.ctx.vertexAttrib1f(this.attributes.aPointSize, points[i].sz);
     //  this.ctx.vertexAttrib3f(this.attributes.aColor, points[i].r, points[i].g, points[i].b);
     //}
-    this.temp = false;
+    this.loading = false;
   }
     this.ctx.drawArrays(this.ctx.POINTS, 0, this.points.length / 8);
     window.requestAnimationFrame(this.draw.bind(this));
   };
 
+  CanvasGL.prototype.addPoints = function(points)
+  {
+    this.points.concat(points);
+  };
+
+  CanvasGL.prototype.updatePoints = function()
+  {
+    var fData = new Float32Array(this.points);
+    var bpe = fData.BYTES_PER_ELEMENT;
+    var buffer = this.ctx.createBuffer();
+    if (!buffer) throw new Error('Failed to create buffer');
+    this.ctx.bindBuffer(this.ctx.ARRAY_BUFFER, buffer);
+    this.ctx.bufferData(this.ctx.ARRAY_BUFFER, fData, this.ctx.STATIC_DRAW);
+    this.ctx.vertexAttribPointer(this.attributes.aPosition, 3, this.ctx.FLOAT, false, 8 * bpe, 0);
+    this.ctx.enableVertexAttribArray(this.attributes.aPosition);
+    this.ctx.vertexAttribPointer(this.attributes.aPointSize, 1, this.ctx.FLOAT, false, 8 * bpe, 3 * bpe);
+    this.ctx.enableVertexAttribArray(this.attributes.aPointSize);
+    this.ctx.vertexAttribPointer(this.attributes.aColor, 3, this.ctx.FLOAT, false, 8 * bpe, 4 * bpe);
+    this.ctx.enableVertexAttribArray(this.attributes.aColor);
+    this.ctx.vertexAttribPointer(this.attributes.fOffset, 1, this.ctx.FLOAT, false, 8 * bpe, 7 * bpe);
+    this.ctx.enableVertexAttribArray(this.attributes.fOffset);
+  };
 
   return CanvasGL;
 });

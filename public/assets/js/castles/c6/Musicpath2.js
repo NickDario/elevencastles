@@ -18,24 +18,10 @@ define(['etc/CanvasGL', 'etc/Audio'], function(CanvasGL, Audio) {
   $.extend(MP2.prototype, Audio.prototype);
 
   MP2.prototype.init = function(){
-    this.initCanvasGL();//{
-    //  canvas_id : 'mp2-canvas',
-    //  vsSrc : "                   \
-    //    attribute vec4 aPosition; \
-    //    void main() {             \
-    //       gl_Position = aPosition;\
-    //       gl_PointSize = 10.0;   \
-    //    }                         \
-    //  ",
-    //  fsSrc : "                   \
-    //    precision mediump float;  \
-    //    uniform vec4 uFragColor;  \
-    //    void main () {            \
-    //      gl_FragColor = uFragColor;\
-    //    }                         \
-    //  ",
-    //});
+    this.initCanvasGL();
   };
+
+  //MP2.prototype.addPointsToBu
 
 
   return MP2;

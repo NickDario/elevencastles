@@ -41,6 +41,9 @@ define(['etc/glMatrix'], function(GM){
       //  matrixid : [[x0, y0, z0], [x1, y1, z1]]
     };
 
+    this.percent = 0;
+    this.waiting = null;
+
     return this;
   };
 
@@ -96,7 +99,7 @@ define(['etc/glMatrix'], function(GM){
     this._clearCanvas();
     var that = this;
 
-    var eye = GM.vec3.fromValues(0, 0, 10);
+    var eye = GM.vec3.fromValues(0, 0, 0);
     var lookAt = GM.vec3.fromValues(0, 0, 0);
     var up = GM.vec3.fromValues(0, 1, 0);
     this.viewMatrix = GM.mat4.create();
@@ -110,7 +113,7 @@ define(['etc/glMatrix'], function(GM){
     this.modelMatrix = GM.mat4.create();
     GM.mat4.identity(this.modelMatrix);
     //GM.mat4.translate(this.modelMatrix, this.modelMatrix, [0.0, -1.0, -100.0]);
-    GM.mat4.translate(this.modelMatrix, this.modelMatrix, [0.0, -1.0, -10.0]);
+    GM.mat4.translate(this.modelMatrix, this.modelMatrix, [0.0, 0.0, 0.0]);
     this.ctx.uniformMatrix4fv(this.uniforms.uModelMatrix, false, this.modelMatrix);
 
     this.beginDraw();
@@ -175,7 +178,7 @@ define(['etc/glMatrix'], function(GM){
   };
 
   //  When binding multiple buffers to program.
-  CanvasGL.prototype.initBuffer = function(data, elemPerVertx, attribute) {
+  CanvasGL.prototype.initBuffer = function(attribute, data, elemPerVertx) {
     var buffer = this.ctx.createBuffer();
     if( !buffer ) throw new Error('Failed to create buffer.');
     this.ctx.bindBuffer(this.ctx.ARRAY_BUFFER, buffer);
@@ -195,10 +198,10 @@ define(['etc/glMatrix'], function(GM){
     //if(Math.abs(this.modelMatrix[12] + toff) < Math.PI / 2){
     //  GM.mat4.translate(this.modelMatrix, this.modelMatrix, [toff, 0, 0]);
     //}
-    if (Math.abs(this.modelMatrix[12] + xoff) > Math.PI * 3) {
+    if (Math.abs(this.modelMatrix[12] + xoff) > 10 ) {
       xoff = 0;
     }
-    if (Math.abs(this.modelMatrix[13] + yoff) > 5) {
+    if (Math.abs(this.modelMatrix[13] + yoff) > 10) {
       yoff = 0;
     }
 
@@ -210,60 +213,77 @@ define(['etc/glMatrix'], function(GM){
     this.ctx.uniformMatrix4fv(this.uniforms.uModelMatrix, false, this.modelMatrix);
 
     this.step += 0.1;
-    if (this.step > 20) this.step = 0;
 
+    //Sin
+    //this.ctx.vertexAttrib1f(this.attributes.fStep, this.step);
+    //this.ctx.uniform1f(this.uniforms.pi2, Math.PI * 2);
 
-    this.ctx.vertexAttrib1f(this.attributes.fStep, this.step);
+    //Grid
+    this.ctx.vertexAttrib1f(this.attributes.step, this.step);
 
-  if(this.loading){
-    var max = (Math.PI * 40);
-    for (var x = 0; x < max; x += 0.1) {
-      this.percent = x/max;
-      var h = Math.sin(x) * 2;
-      var r = 0.5;
-      var g = 0.1;
-      var b = 0.1;
-      var w = ((x) / (Math.PI * 2) - 10);
-      var size = 3; //Math.abs(Math.cos(x)) * 20;
-      var z = 0;
-      for(var i = 0; i < 20; i ++){
-        this.points = this.points.concat([w, h, z, size, r, g, b, i]);
+    if(this.loading){
+      for(var i = 0; i < 100; i ++) {
+        this.points = this.points.concat([0,0, i, 50,0,i]);
       }
+
+      var fData = new Float32Array(this.points);
+      var bpe = fData.BYTES_PER_ELEMENT;
+      var buffer = this.ctx.createBuffer();
+      if(!buffer) throw new Error('Failed to create buffer');
+      this.ctx.bindBuffer(this.ctx.ARRAY_BUFFER, buffer);
+      this.ctx.bufferData(this.ctx.ARRAY_BUFFER, fData, this.ctx.STATIC_DRAW);
+      this.ctx.vertexAttribPointer(this.attributes.aPosition, 3, this.ctx.FLOAT, false, 3 * bpe, 0);
+      this.ctx.enableVertexAttribArray(this.attributes.aPosition);
+      this.loading = false;
     }
-    this.updatePoints();
 
-    //this.ctx.enableVertexAttribArray(this.attributes.uProjMatrix);
-    //this.ctx.enableVertexAttribArray(this.attributes.uViewMatrix);
-    //this.ctx.enableVertexAttribArray(this.attributes.uModelMatrix);
-
-    // Multiple
-    //var fPositions = new Float32Array(positions);
-    //var fColors = new Float32Array(colors);
-    //var fSizes = new Float32Array(sizes);
-    //this.initBuffer(fPositions, 2, this.attributes.aPosition);
-    //this.initBuffer(fColors, 3, this.attributes.aPointSize);
-    //this.initBuffer(fSizes, 1, this.attributes.aColor);
-
-
-    //points.push({x : 0.0, y : 0.5, sz: 10.0, r: 1.0, g: 0.0, b: 0.0});
-
-    //for(var i=0; i < points.length; i++) {
-    //  this.ctx.vertexAttrib4f(this.attributes.aPosition, points[i].x, points[i].y, 0.0, 1.0);
-    //  this.ctx.vertexAttrib1f(this.attributes.aPointSize, points[i].sz);
-    //  this.ctx.vertexAttrib3f(this.attributes.aColor, points[i].r, points[i].g, points[i].b);
-    //}
-    this.loading = false;
-  }
-    this.ctx.drawArrays(this.ctx.POINTS, 0, this.points.length / 8);
+    this.ctx.drawArrays(this.ctx.LINES, 0, this.points.length / 3);
     window.requestAnimationFrame(this.draw.bind(this));
+
+//
+//  if(this.loading){
+//    //  Sin wave
+//    //var max = (Math.PI * 50);
+//    //var flip = true;
+//    /*for(var j = 0; j < 40; j ++){
+//      this.percent = j / 40 * 100;
+//      var z = 0;
+//      if(flip) {
+//        for (var x = 0; x < max; x += 0.1) {
+//          this.points = this.points.concat([x, z, j, x, z, j+1]);
+//        }
+//      } else {
+//        for (var x = max; x > 0; x -= 0.1) {
+//          this.points = this.points.concat([x, z, j, x, z, j+1]);
+//        }
+//      }
+//      flip = !flip;
+//    }
+//    this.updateSinPoints();
+//*/
+//
+//    // Grid
+//    //  Horizontal
+//
+//
+//
+//    //for(var x = 0; x < 1000; x++) {
+//    //  this.points = this.points.concat([x,0,0]);
+//    //  this.points = this.points.concat([x,0,-1000]);
+//    //}
+//    for(var z = 0; z < 1000; z ++) {
+//      this.points = this.points.concat([-1000,z]);
+//    }
+//    this.updateGridPoints();
+//
+//    this.loading = false;
+//  }
+//    this.ctx.drawArrays(this.ctx.LINES, 0, this.points.length / 3);
+//    window.requestAnimationFrame(this.draw.bind(this));
   };
 
-  CanvasGL.prototype.addPoints = function(points)
-  {
-    this.points.concat(points);
-  };
 
-  CanvasGL.prototype.updatePoints = function()
+  CanvasGL.prototype.updateSinPoints = function()
   {
     var fData = new Float32Array(this.points);
     var bpe = fData.BYTES_PER_ELEMENT;
@@ -271,14 +291,40 @@ define(['etc/glMatrix'], function(GM){
     if (!buffer) throw new Error('Failed to create buffer');
     this.ctx.bindBuffer(this.ctx.ARRAY_BUFFER, buffer);
     this.ctx.bufferData(this.ctx.ARRAY_BUFFER, fData, this.ctx.STATIC_DRAW);
-    this.ctx.vertexAttribPointer(this.attributes.aPosition, 3, this.ctx.FLOAT, false, 8 * bpe, 0);
-    this.ctx.enableVertexAttribArray(this.attributes.aPosition);
-    this.ctx.vertexAttribPointer(this.attributes.aPointSize, 1, this.ctx.FLOAT, false, 8 * bpe, 3 * bpe);
-    this.ctx.enableVertexAttribArray(this.attributes.aPointSize);
-    this.ctx.vertexAttribPointer(this.attributes.aColor, 3, this.ctx.FLOAT, false, 8 * bpe, 4 * bpe);
-    this.ctx.enableVertexAttribArray(this.attributes.aColor);
-    this.ctx.vertexAttribPointer(this.attributes.fOffset, 1, this.ctx.FLOAT, false, 8 * bpe, 7 * bpe);
+    //this.ctx.vertexAttribPointer(this.attributes.aPosition, 3, this.ctx.FLOAT, false, 4 * bpe, 0);
+    //this.ctx.enableVertexAttribArray(this.attributes.aPosition);
+    this.ctx.vertexAttribPointer(this.attributes.xPos, 1, this.ctx.FLOAT, false, 3 * bpe, 0);
+    this.ctx.enableVertexAttribArray(this.attributes.xPos);
+    //this.ctx.vertexAttribPointer(this.attributes.yPos, 1, this.ctx.FLOAT, false, 4 * bpe, bpe);
+    //this.ctx.enableVertexAttribArray(t
+    // his.attributes.yPos);
+    this.ctx.vertexAttribPointer(this.attributes.zPos, 1, this.ctx.FLOAT, false, 3 * bpe, bpe);
+    this.ctx.enableVertexAttribArray(this.attributes.zPos);
+    //this.ctx.vertexAttribPointer(this.attributes.aPointSize, 1, this.ctx.FLOAT, false, 5 * bpe, 3 * bpe);
+    //this.ctx.enableVertexAttribArray(this.attributes.aPointSize);
+    //this.ctx.vertexAttribPointer(this.attributes.aColor, 3, this.ctx.FLOAT, false, 8 * bpe, 4 * bpe);
+    //this.ctx.enableVertexAttribArray(this.attributes.aColor);
+    this.ctx.vertexAttribPointer(this.attributes.fOffset, 1, this.ctx.FLOAT, false,  3 * bpe, 2 * bpe);
     this.ctx.enableVertexAttribArray(this.attributes.fOffset);
+  };
+
+  CanvasGL.prototype.updateGridPoints = function()
+  {
+    var fData = new Float32Array(this.points);
+    var bpe = fData.BYTES_PER_ELEMENT;
+    var buffer = this.ctx.createBuffer();
+    if(!buffer) throw new Error('Failed to create buffer');
+    this.ctx.bindBuffer(this.ctx.ARRAY_BUFFER, buffer);
+    this.ctx.bufferData(this.ctx.ARRAY_BUFFER, fData, this.ctx.STATIC_DRAW);
+    this.ctx.vertexAttribPointer(this.attributes.xPos, 1, this.ctx.FLOAT, false, 3 * bpe, 0);
+    this.ctx.enableVertexAttribArray(this.attributes.xPos);
+    this.ctx.vertexAttribPointer(this.attributes.zPos, 1, this.ctx.FLOAT, false, 3 * bpe, bpe);
+    this.ctx.enableVertexAttribArray(this.attributes.zPos);
+  }
+
+  CanvasGL.prototype._updateLoading = function(){
+    console.log(this.percent);
+    $('#loading .num').text(this.percent);
   };
 
   return CanvasGL;

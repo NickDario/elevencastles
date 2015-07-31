@@ -19,11 +19,11 @@ define(['etc/glMatrix'], function(GM){
     this.camerax = 0;
     this.cameray = 0;
 
-    this.vsSrc = config['vsSrc'];
-    this.fsSrc = config['fsSrc'];
+    this.vertShaderSrc = config['vertShaderSrc'] != null ? config['vertShaderSrc'] : [];
+    this.fragShaderSrc = config['fragShaderSrc'] != null ? config['fragShaderSrc'] : [];
 
-    this.vs = null;
-    this.fs = null;
+    this.vertShaders = [];
+    this.fragShaders = [];
 
     this.modelMatrix = null;
     this.viewMatrix = null;
@@ -70,34 +70,19 @@ define(['etc/glMatrix'], function(GM){
   };
 
   CanvasGL.prototype.initCanvasGL = function(){
-    this._initCanvasCtxContainer();
+    this.initWebGL();
     if (this.ctx) {
       this.ctx.clearColor(0.0, 0.0, 0.0, 1.0);                      // Set clear color to black, fully opaque
       this.ctx.enable(this.ctx.DEPTH_TEST);                               // Enable depth testing
       this.ctx.depthFunc(this.ctx.LEQUAL);                                // Near things obscure far things
       this.ctx.clear(this.ctx.COLOR_BUFFER_BIT|this.ctx.DEPTH_BUFFER_BIT);      // Clear the color as well as the depth buffer.
     }
-
     this.initEventHandlers();
-
-    this.vs = this.buildInShader(this.ctx, this.ctx.VERTEX_SHADER, this.vsSrc);
-    this.fs = this.buildInShader(this.ctx, this.ctx.FRAGMENT_SHADER, this.fsSrc);
-
-    this.program = this.ctx.createProgram();
-    this.ctx.attachShader(this.program, this.vs);
-    this.ctx.attachShader(this.program, this.fs);
-    this.ctx.linkProgram(this.program);
-
-    if(!this.ctx.getProgramParameter(this.program, this.ctx.LINK_STATUS)){
-      alert('Unable to initialize shader program');
-    }
-    this.ctx.useProgram(this.program);
-
+    this.initShaders();
+    this.initProgram();
     this._getAttributes(this.program);
     this._getUniforms(this.program);
-
     this._clearCanvas();
-    var that = this;
 
     var eye = GM.vec3.fromValues(0, 0, 0);
     var lookAt = GM.vec3.fromValues(0, 0, 0);
@@ -113,7 +98,7 @@ define(['etc/glMatrix'], function(GM){
     this.modelMatrix = GM.mat4.create();
     GM.mat4.identity(this.modelMatrix);
     //GM.mat4.translate(this.modelMatrix, this.modelMatrix, [0.0, -1.0, -100.0]);
-    GM.mat4.translate(this.modelMatrix, this.modelMatrix, [0.0, 0.0, 0.0]);
+    GM.mat4.translate(this.modelMatrix, this.modelMatrix, [0.0, 0.0, -50.0]);
     this.ctx.uniformMatrix4fv(this.uniforms.uModelMatrix, false, this.modelMatrix);
 
     this.beginDraw();
@@ -123,7 +108,7 @@ define(['etc/glMatrix'], function(GM){
     window.requestAnimationFrame(this.draw.bind(this));
   };
 
-  CanvasGL.prototype._initCanvasCtxContainer = function(){
+  CanvasGL.prototype.initWebGL = function(){
     this.canvas = document.getElementById(this.canvas_id);
     this.container = this.canvas.parentNode;
     this.canvas_rect = this.canvas.getBoundingClientRect();
@@ -140,6 +125,34 @@ define(['etc/glMatrix'], function(GM){
       alert("Unable to initialize WebGL. Your browser may not support it.");
       this.ctx = null;
     }
+  };
+
+  CanvasGL.prototype.initShaders = function()
+  {
+    for(var i = 0; i < this.fragShaderSrc.length; i ++){
+      this.vertShaders.push(this.buildInShader(this.ctx, this.ctx.VERTEX_SHADER, this.vertShaderSrc[i]));
+    }
+    for(var j = 0; j < this.fragShaderSrc.length; j ++) {
+      this.fragShaders.push(this.buildInShader(this.ctx, this.ctx.FRAGMENT_SHADER, this.fragShaderSrc[j]));
+    }
+  };
+
+  CanvasGL.prototype.initProgram = function()
+  {
+    this.program = this.ctx.createProgram();
+    for(var i = 0; i < this.vertShaders.length; i ++) {
+      this.ctx.attachShader(this.program, this.vertShaders[i]);
+    }
+    for(var j = 0; j < this.fragShaders.length; j ++) {
+      this.ctx.attachShader(this.program, this.fragShaders[j]);
+    }
+
+    this.ctx.linkProgram(this.program);
+    if(!this.ctx.getProgramParameter(this.program, this.ctx.LINK_STATUS)){
+      alert('Unable to initialize shader program');
+    }
+
+    this.ctx.useProgram(this.program);
   };
 
   CanvasGL.prototype._getUniforms = function(program) {
@@ -189,15 +202,10 @@ define(['etc/glMatrix'], function(GM){
 
   CanvasGL.prototype.draw = function() {
     this.ctx.viewport(0, 0, this.canvas.width, this.canvas.height);
-    //this._clearCanvas();
 
-
-    //this.transforms['modelmatrix'].push(this.modelMatrix);
     var xoff = -((this.mpx / this.canvas.width) - ((this.canvas.width / 2) / this.canvas.width)) / 5;
     var yoff = ((this.mpy / this.canvas.height) - ((this.canvas.height / 2) / this.canvas.height)) / 5;
-    //if(Math.abs(this.modelMatrix[12] + toff) < Math.PI / 2){
-    //  GM.mat4.translate(this.modelMatrix, this.modelMatrix, [toff, 0, 0]);
-    //}
+
     if (Math.abs(this.modelMatrix[12] + xoff) > 10 ) {
       xoff = 0;
     }
@@ -209,118 +217,38 @@ define(['etc/glMatrix'], function(GM){
     this.cameray += yoff;
 
     GM.mat4.translate(this.modelMatrix, this.modelMatrix, [xoff, yoff, 0]);
-    //GM.mat4.rotateY(this.modelMatrix, this.modelMatrix, Math.PI / 180);
     this.ctx.uniformMatrix4fv(this.uniforms.uModelMatrix, false, this.modelMatrix);
 
     this.step += 0.1;
-
-    //Sin
-    //this.ctx.vertexAttrib1f(this.attributes.fStep, this.step);
-    //this.ctx.uniform1f(this.uniforms.pi2, Math.PI * 2);
 
     //Grid
     this.ctx.vertexAttrib1f(this.attributes.step, this.step);
 
     if(this.loading){
       for(var i = 0; i < 100; i ++) {
-        this.points = this.points.concat([0,0, i, 50,0,i]);
+        this.points = this.points.concat([-50,0, i, 50,0,i]);
+        //this.points.push([-50,0, i]);
+        //this.points.push([ 50,0,i]);
+        //this.boints.push([]);
       }
 
       var fData = new Float32Array(this.points);
       var bpe = fData.BYTES_PER_ELEMENT;
-      var buffer = this.ctx.createBuffer();
-      if(!buffer) throw new Error('Failed to create buffer');
-      this.ctx.bindBuffer(this.ctx.ARRAY_BUFFER, buffer);
-      this.ctx.bufferData(this.ctx.ARRAY_BUFFER, fData, this.ctx.STATIC_DRAW);
-      this.ctx.vertexAttribPointer(this.attributes.aPosition, 3, this.ctx.FLOAT, false, 3 * bpe, 0);
-      this.ctx.enableVertexAttribArray(this.attributes.aPosition);
+      this.initBuffer(this.attributes.aPosition, fData, 3);
+      //this.initBuffer(this.attributes.bPosition, fData, 3);
+      //var buffer = this.ctx.createBuffer();
+      //if(!buffer) throw new Error('Failed to create buffer');
+      //this.ctx.bindBuffer(this.ctx.ARRAY_BUFFER, buffer);
+      //this.ctx.bufferData(this.ctx.ARRAY_BUFFER, fData, this.ctx.STATIC_DRAW);
+      //this.ctx.vertexAttribPointer(this.attributes.aPosition, 3, this.ctx.FLOAT, false, 3 * bpe, 0);
+      //this.ctx.enableVertexAttribArray(this.attributes.aPosition);
       this.loading = false;
     }
 
     this.ctx.drawArrays(this.ctx.LINES, 0, this.points.length / 3);
     window.requestAnimationFrame(this.draw.bind(this));
-
-//
-//  if(this.loading){
-//    //  Sin wave
-//    //var max = (Math.PI * 50);
-//    //var flip = true;
-//    /*for(var j = 0; j < 40; j ++){
-//      this.percent = j / 40 * 100;
-//      var z = 0;
-//      if(flip) {
-//        for (var x = 0; x < max; x += 0.1) {
-//          this.points = this.points.concat([x, z, j, x, z, j+1]);
-//        }
-//      } else {
-//        for (var x = max; x > 0; x -= 0.1) {
-//          this.points = this.points.concat([x, z, j, x, z, j+1]);
-//        }
-//      }
-//      flip = !flip;
-//    }
-//    this.updateSinPoints();
-//*/
-//
-//    // Grid
-//    //  Horizontal
-//
-//
-//
-//    //for(var x = 0; x < 1000; x++) {
-//    //  this.points = this.points.concat([x,0,0]);
-//    //  this.points = this.points.concat([x,0,-1000]);
-//    //}
-//    for(var z = 0; z < 1000; z ++) {
-//      this.points = this.points.concat([-1000,z]);
-//    }
-//    this.updateGridPoints();
-//
-//    this.loading = false;
-//  }
-//    this.ctx.drawArrays(this.ctx.LINES, 0, this.points.length / 3);
-//    window.requestAnimationFrame(this.draw.bind(this));
   };
 
-
-  CanvasGL.prototype.updateSinPoints = function()
-  {
-    var fData = new Float32Array(this.points);
-    var bpe = fData.BYTES_PER_ELEMENT;
-    var buffer = this.ctx.createBuffer();
-    if (!buffer) throw new Error('Failed to create buffer');
-    this.ctx.bindBuffer(this.ctx.ARRAY_BUFFER, buffer);
-    this.ctx.bufferData(this.ctx.ARRAY_BUFFER, fData, this.ctx.STATIC_DRAW);
-    //this.ctx.vertexAttribPointer(this.attributes.aPosition, 3, this.ctx.FLOAT, false, 4 * bpe, 0);
-    //this.ctx.enableVertexAttribArray(this.attributes.aPosition);
-    this.ctx.vertexAttribPointer(this.attributes.xPos, 1, this.ctx.FLOAT, false, 3 * bpe, 0);
-    this.ctx.enableVertexAttribArray(this.attributes.xPos);
-    //this.ctx.vertexAttribPointer(this.attributes.yPos, 1, this.ctx.FLOAT, false, 4 * bpe, bpe);
-    //this.ctx.enableVertexAttribArray(t
-    // his.attributes.yPos);
-    this.ctx.vertexAttribPointer(this.attributes.zPos, 1, this.ctx.FLOAT, false, 3 * bpe, bpe);
-    this.ctx.enableVertexAttribArray(this.attributes.zPos);
-    //this.ctx.vertexAttribPointer(this.attributes.aPointSize, 1, this.ctx.FLOAT, false, 5 * bpe, 3 * bpe);
-    //this.ctx.enableVertexAttribArray(this.attributes.aPointSize);
-    //this.ctx.vertexAttribPointer(this.attributes.aColor, 3, this.ctx.FLOAT, false, 8 * bpe, 4 * bpe);
-    //this.ctx.enableVertexAttribArray(this.attributes.aColor);
-    this.ctx.vertexAttribPointer(this.attributes.fOffset, 1, this.ctx.FLOAT, false,  3 * bpe, 2 * bpe);
-    this.ctx.enableVertexAttribArray(this.attributes.fOffset);
-  };
-
-  CanvasGL.prototype.updateGridPoints = function()
-  {
-    var fData = new Float32Array(this.points);
-    var bpe = fData.BYTES_PER_ELEMENT;
-    var buffer = this.ctx.createBuffer();
-    if(!buffer) throw new Error('Failed to create buffer');
-    this.ctx.bindBuffer(this.ctx.ARRAY_BUFFER, buffer);
-    this.ctx.bufferData(this.ctx.ARRAY_BUFFER, fData, this.ctx.STATIC_DRAW);
-    this.ctx.vertexAttribPointer(this.attributes.xPos, 1, this.ctx.FLOAT, false, 3 * bpe, 0);
-    this.ctx.enableVertexAttribArray(this.attributes.xPos);
-    this.ctx.vertexAttribPointer(this.attributes.zPos, 1, this.ctx.FLOAT, false, 3 * bpe, bpe);
-    this.ctx.enableVertexAttribArray(this.attributes.zPos);
-  }
 
   CanvasGL.prototype._updateLoading = function(){
     console.log(this.percent);

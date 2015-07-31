@@ -59,7 +59,7 @@ define(['../jquery.min', '../jquery-ui.min'], function(jquery, jqueryui){
                    vColor = vec4(0.5, 0.1, 0.1, 0.9);         \
                 }                           \
               ",*/
-              vsSrc : "\
+              vertShaderSrc : ["\
               attribute vec4 aPosition;\
               attribute float step;\
               \
@@ -69,20 +69,35 @@ define(['../jquery.min', '../jquery-ui.min'], function(jquery, jqueryui){
               varying vec4 vColor;\
                 \
               void main() {\
-                vec4 p = aPosition + vec4(0.0, 0.0, mod(step, 100.0), 1.0);\
-                gl_Position = uProjMatrix * uViewMatrix * uModelMatrix * aPosition; \
+                vec4 p = aPosition + vec4(0.0, 0.0, mod((step + aPosition.z), 1.0), 1.0);\
+                gl_Position = uProjMatrix * uViewMatrix * uModelMatrix * p; \
                 gl_PointSize = 10.0;\
                 vColor = vec4(0.2, 0.4, 0.8, 0.9);\
               }\
-              ",
-              fsSrc : "                     \
+              ", "\
+              attribute vec4 bPosition;\
+              \
+              uniform mat4 uModelMatrix;  \
+              uniform mat4 uViewMatrix;   \
+              uniform mat4 uProjMatrix;   \
+              varying vec4 vColor;\
+              \
+              void main() {\
+                vec4 b = bPosition + vec4(mod((step + aPosition.x), 1.0), 0.0, 0.0, 1.0);\
+                gl_Position = uProjMatrix * uViewMatrix * uModelMatrix * b; \
+                gl_PointSize = 10.0;\
+                vColor = vec4(0.8, 0.4, 0.2, 0.9);\
+              }\
+              \
+              "],
+              fragShaderSrc : ["                     \
                 precision mediump float;    \
                 varying vec4 vColor;        \
                 \
                 void main () {              \
                   gl_FragColor = vColor;    \
                 }                           \
-              "
+              "]
             });
             mp.init();
         });

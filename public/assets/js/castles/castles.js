@@ -28,76 +28,7 @@ define(['../jquery.min', '../jquery-ui.min'], function(jquery, jqueryui){
         require(['c6/Musicpath2'], function(MP2){
             var mp = new MP2({
               canvas_id:'mp2-canvas',
-              audio_id :'mp2-audio',
-              /*
-              vsSrc : "                     \
-                attribute vec4 aPosition;   \
-                attribute float aPointSize; \
-                attribute vec4 aColor;      \
-                \
-                \
-                attribute float xPos;\
-                attribute float yPos;\
-                attribute float zPos;\
-                attribute float fStep;\
-                attribute float fOffset;\
-                \
-                uniform float pi2;\
-                uniform mat4 uModelMatrix;  \
-                uniform mat4 uViewMatrix;   \
-                uniform mat4 uProjMatrix;   \
-                \
-                varying vec4 vColor;        \
-                \
-                void main() {               \
-                   float m = mod((fStep + fOffset), 20.0);\
-                   vec4 p = aPosition + vec4(0.0, 0.0, m, 0.0);\
-                   vec4 c = vec4(xPos / pi2 - 12.5, sin(xPos), zPos + m, 1.0);\
-                   gl_Position = uProjMatrix * uViewMatrix * uModelMatrix * c; \
-                   \
-                   gl_PointSize = 3.0;\
-                   vColor = vec4(0.5, 0.1, 0.1, 0.9);         \
-                }                           \
-              ",*/
-              vertShaderSrc : ["\
-              attribute vec4 aPosition;\
-              attribute float step;\
-              \
-              uniform mat4 uModelMatrix;  \
-              uniform mat4 uViewMatrix;   \
-              uniform mat4 uProjMatrix;   \
-              varying vec4 vColor;\
-                \
-              void main() {\
-                vec4 p = aPosition + vec4(0.0, 0.0, mod((step + aPosition.z), 1.0), 1.0);\
-                gl_Position = uProjMatrix * uViewMatrix * uModelMatrix * p; \
-                gl_PointSize = 10.0;\
-                vColor = vec4(0.2, 0.4, 0.8, 0.9);\
-              }\
-              ", "\
-              attribute vec4 bPosition;\
-              \
-              uniform mat4 uModelMatrix;  \
-              uniform mat4 uViewMatrix;   \
-              uniform mat4 uProjMatrix;   \
-              varying vec4 vColor;\
-              \
-              void main() {\
-                vec4 b = bPosition + vec4(mod((step + aPosition.x), 1.0), 0.0, 0.0, 1.0);\
-                gl_Position = uProjMatrix * uViewMatrix * uModelMatrix * b; \
-                gl_PointSize = 10.0;\
-                vColor = vec4(0.8, 0.4, 0.2, 0.9);\
-              }\
-              \
-              "],
-              fragShaderSrc : ["                     \
-                precision mediump float;    \
-                varying vec4 vColor;        \
-                \
-                void main () {              \
-                  gl_FragColor = vColor;    \
-                }                           \
-              "]
+              audio_id :'mp2-audio'
             });
             mp.init();
         });

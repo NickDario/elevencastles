@@ -1259,8 +1259,7 @@
 
 //  === glUtils.js===
 //
-//  Augments Sylvestor some but is not
-//  Part of the script.
+//  Augments Sylvestor some.
 //
 
 Matrix.Translation = function (v)

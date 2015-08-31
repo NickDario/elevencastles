@@ -32,6 +32,10 @@ class CastleController extends BaseController{
                 'id' => 3,
                 'name' => 'Vehicles'
             ),
+            array(
+                'id' => 4,
+                'name' => 'Life'
+            )
         );
     }
 
@@ -76,6 +80,11 @@ class CastleController extends BaseController{
                     'prompt' => $prompt,
                     'current' => $this->projects[$pid],
                     'projects' => $this->projects,
+                ));
+            case 4:
+                return View::make('projects.life', array(
+                    'current' => $this->projects[$pid],
+                    'projects' => $this->projects
                 ));
             default:
                 break;

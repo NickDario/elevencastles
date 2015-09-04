@@ -7,10 +7,11 @@ define(['etc/Canvas'], function(Canvas){
 
   var Life = function(config){
     Canvas.call(this, config);
-    this.square_size = 15;
+    this.square_size = 5;
     this.sqcount_x = 0;
     this.sqcount_y = 0;
 
+    this.playing = true;
     this.generation = 150; // ms
     this.epoch = 0;
 
@@ -57,8 +58,7 @@ define(['etc/Canvas'], function(Canvas){
         if(this.squares[x] == null){
           this.squares[x] = [];
         }
-        this.squares[x][y] = Math.random() > 0.1 ? 0 : 1;
-        //this.squares[x][y] = 0;
+        this.squares[x][y] = Math.random() > 0.05 ? 0 : 1;
       }
     }
   };
@@ -143,6 +143,23 @@ define(['etc/Canvas'], function(Canvas){
     this.draw();
   };
 
+  Life.prototype.reset = function(){
+    this.initSquares();
+    this.draw();
+  };
+
+  Life.prototype.clear = function(){
+    for(var x = 0; x < this.sqcount_x; x ++) {
+      for(var y = 0; y < this.sqcount_y; y ++) {
+        if(this.squares[x] == null){
+          this.squares[x] = [];
+        }
+        this.squares[x][y] = 0;
+      }
+    }
+    this.draw();
+  };
+
   Life.prototype.countAdjacent = function(sqcoords){
     var xmo = sqcoords.x == 0 ? this.sqcount_x-1 : sqcoords.x - 1;
     var xpo = sqcoords.x == this.sqcount_x-1 ? 0 : sqcoords.x + 1;
@@ -167,10 +184,18 @@ define(['etc/Canvas'], function(Canvas){
     this.stopRender();
   };
 
+  Life.prototype.pause = function(){
+    this.playing = false;
+  };
+
+  Life.prototype.play = function(){
+    this.playing = true;
+  };
+
 
   Life.prototype.draw = function(){
     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-    this.initGrid();
+    //this.initGrid();
 
     if(this.clicked){
       var c = this.coordToSquare({
@@ -180,7 +205,7 @@ define(['etc/Canvas'], function(Canvas){
       this.squares[c.x][c.y] = 1;
     }
 
-    if(this.newGeneration()){
+    if(this.newGeneration() && this.playing){
       this.step();
     }
 

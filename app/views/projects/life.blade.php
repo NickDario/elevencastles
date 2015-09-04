@@ -20,6 +20,9 @@
                 <a class="reset btn-ctrl" href="#">
                     <span>Reset</span>
                 </a>
+                <a class="clear btn-ctrl" href="#">
+                    <span>Clear</span>
+                </a>
             </div>
         </div>
         <div class="display">

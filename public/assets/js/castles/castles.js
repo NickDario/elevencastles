@@ -263,15 +263,19 @@ define(['../jquery.min', '../jquery-ui.min'], function(jquery, jqueryui){
         $(this).toggleClass('paused');
         $(this).find('span').toggle();
         if($(this).hasClass('paused')){
-          life.stop();
+          life.pause();
         } else{
-          life.start();
+          life.play();
         }
-
-        $()
       });
       $('.step', controls).on('click', function(e) {
         life.nextStep();
+      });
+      $('.reset', controls).on('click', function(e) {
+        life.reset();
+      });
+      $('.clear', controls).on('click', function(e) {
+        life.clear();
       });
     });
   });

@@ -3,3 +3,63 @@ canvas:active{
   cursor:default;
 }
 
+#pattern-controls{
+  float:left;
+  width: 50%;
+  .pattern-setting{
+    height: 50px;
+    &>span{
+      float: left;
+    }
+    &>div{
+      top:30px;
+      //margin-top: 15px;
+    }
+    &>.pattern-counter{
+      float:right;
+    }
+  }
+}
+
+.life-setting{
+  & .ui-slider{
+    margin: 10px 0;
+  }
+}
+
+
+.btn-ctrl.pattern-select{
+  margin-left:0;
+  margin-top:10px;
+  background: lighten(@primary-dark, 10%);
+}
+
+//.btn-ctrl, .btn-ctrl:focus{
+//  transition-duration: .1s;
+//  margin-left: 25px;
+//  width: 100px;
+//  padding:5px 7px;
+//  background:@primary-dark;
+//  color:white;
+//  text-decoration: none;
+//  border: 1px solid transparent;
+//  cursor: pointer;
+//  display: inline-block;
+//  text-align: center;
+//  .noselect();
+//  &:hover{
+//    text-decoration: none;
+//    color: white;
+//    border: 1px solid white;
+//    box-shadow: 0 0 30px -5px #464646;
+//  }
+//  &.on, &.paused{
+//    text-decoration: none;
+//    color:white;
+//    border: 1px solid white;
+//    box-shadow: 0 0 30px -5px #464646;
+//  }
+//}
+//& .btn-menu{
+//  width: 150px !important;
+//}

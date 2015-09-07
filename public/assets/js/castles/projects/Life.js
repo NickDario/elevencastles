@@ -17,6 +17,9 @@ define(['etc/Canvas'], function(Canvas){
 
     this.squares = [];
     this.future = [];
+    this.locked = [];
+
+    this.pattern = '';
   };
 
   Life.constructor = Life;
@@ -129,7 +132,7 @@ define(['etc/Canvas'], function(Canvas){
         if(adj == 3) {
           this.future[x][y] = 1;
         } else if(adj == 2) {
-          this.future[x][y] = this.squares[x][y];
+          this.future[x][y] = Math.floor(this.squares[x][y]);
         } else {
           this.future[x][y] = 0;
         }
@@ -176,6 +179,68 @@ define(['etc/Canvas'], function(Canvas){
           Math.floor(this.squares[xpo][ypo]));
   };
 
+  Life.prototype._setRelativeSquare = function(startcoords, endcoords, val){
+    return this.squares[startcoords.x + endcoords.x][startcoords.y + endcoords.y] = val;
+  };
+
+  Life.prototype._checkRelativeSquare = function(startcoords, endcoords){
+    return this.squares[startcoords.x + endcoords.x][startcoords.y + endcoords.y]
+  };
+
+  Life.prototype.createLifePattern = function(name, center, color){
+    switch(name){
+      case 'glider':
+        this._createGlider(center, color);
+        break;
+      case 's-spaceship':
+        this._createMSpaceship(center, 0, color);
+        break;
+      case 'm-spaceship':
+        this._createMSpaceship(center, 1, color);
+        break;
+      case 'l-spaceship':
+        this._createMSpaceship(center, 2, color);
+        break;
+    }
+  };
+
+  Life.prototype._createGlider = function(center, color){
+      this._setRelativeSquare(center, {x:0,y:1}, color);
+      this._setRelativeSquare(center, {x: 1, y: 0}, color);
+      this._setRelativeSquare(center, {x: 1, y: -1}, color);
+      this._setRelativeSquare(center, {x: 0, y: -1}, color);
+      this._setRelativeSquare(center, {x: -1, y: -1}, color);
+  };
+
+  Life.prototype._createMSpaceship = function(center, size, color){
+    this._setRelativeSquare(center, {x:2,y:1}, color);
+    this._setRelativeSquare(center, {x:2,y:0}, color);
+    this._setRelativeSquare(center, {x:2,y:-1}, color);
+    this._setRelativeSquare(center, {x:1, y:2}, color);
+    this._setRelativeSquare(center, {x:1,y:-1}, color);
+    this._setRelativeSquare(center, {x:0,y:-1}, color);
+    this._setRelativeSquare(center, {x:-1,y:-1}, color);
+    if(size == 0) {
+      this._setRelativeSquare(center, {x:-2,y:0}, color);
+    } else if(size == 1) {
+      this._setRelativeSquare(center, {x:-2,y:-1}, color);
+      this._setRelativeSquare(center, {x:-3,y:0}, color);
+    } else if(size == 2) {
+      this._setRelativeSquare(center, {x:-2,y:-1}, color);
+      this._setRelativeSquare(center, {x:-3,y:-1}, color);
+      this._setRelativeSquare(center, {x:-4,y:0}, color);
+    }
+  };
+
+  Life.prototype._hasLock = function(x,y){
+    for(var c in this.locked){
+      if(this.locked[c].x == x && this.locked[c].y == y){
+        return true;
+      }
+    }
+    return false;
+  };
+
   Life.prototype.start = function(){
     this.beginRender(this.draw);
   };
@@ -195,14 +260,38 @@ define(['etc/Canvas'], function(Canvas){
 
   Life.prototype.draw = function(){
     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-    //this.initGrid();
+
+    if(this.square_size > 30){
+      this.initGrid();
+    }
 
     if(this.clicked){
       var c = this.coordToSquare({
         x:this.mpX,
         y:this.mpY
       });
-      this.squares[c.x][c.y] = 1;
+      if(!this._hasLock(c.x, c.y)) {
+        this.locked.push({x: c.x, y: c.y});
+        if (this.pattern) {
+          this.createLifePattern(this.pattern, c, 1);
+        } else {
+          this.squares[c.x][c.y] = this.squares[c.x][c.y] == 1 ? 0 : 1;
+        }
+      }
+
+    } else if(this.playing){
+      this.locked = [];
+      var c = this.coordToSquare({
+        x:this.mpX,
+        y:this.mpY
+      });
+      if(this.pattern){
+        //this.createLifePattern(this.pattern, c, 0.1);
+      } else if(!(this.squares[c.x][c.y] == 1)){
+        //this.squares[c.x][c.y] = 0.1;
+      }
+    } else {
+      this.locked = [];
     }
 
     if(this.newGeneration() && this.playing){

@@ -257,6 +257,14 @@ define(['../jquery.min', '../jquery-ui.min'], function(jquery, jqueryui){
         canvas_id : 'life-canvas'
       }).init();
 
+      document.getElementById('life-canvas').addEventListener('mousewheel', function(e){
+        if(event.wheelDelta > 0){
+          //life.
+        }
+        return false;
+      }, false);
+
+
       $('.pp', controls).on('click', function(e){
         e.preventDefault();
         e.stopPropagation();
@@ -277,6 +285,49 @@ define(['../jquery.min', '../jquery-ui.min'], function(jquery, jqueryui){
       $('.clear', controls).on('click', function(e) {
         life.clear();
       });
+
+      $('.pattern-select').on('click', function(e) {
+        if($(this).hasClass('on')){
+          $(this).removeClass('on');
+          life.pattern = '';
+        } else {
+          $('.pattern-select').removeClass('on');
+          $(this).addClass('on');
+          life.pattern = $(this).data('pattern');
+        }
+      });
+
+      $(document).on('scroll', function(e){
+        console.log('scroll');
+      });
+
+      var custom = $('#life-controls');
+      var div = document.createElement('div');
+      var slider = document.createElement('div');
+      var title  = document.createElement('span');
+      var value  = document.createElement('span');
+      title.innerText = "generation (ms)";
+      value.id = "generation-value";
+      value.innerText = 150;
+      value.className = "life-counter";
+      div.id = "life-generation";
+      div.className = 'life-setting';
+      div.setAttribute('data-name', 'generation');
+      div.appendChild(title);
+      div.appendChild(slider);
+      div.appendChild(value);
+      $(slider).slider({
+        max: 10000,
+        min: 1,
+        value: 100,
+        step : 10,
+        change: function(e, ui){
+          var p = $(this).parent();
+          $('.life-counter', p).text(ui.value);
+          life.generation = ui.value;
+        }
+      });
+      custom.append(div);
     });
   });
 
@@ -286,7 +337,7 @@ define(['../jquery.min', '../jquery-ui.min'], function(jquery, jqueryui){
 
   $('#nav-toggle').on('click', function(){
     $(this).toggleClass('on');
-    if($(this).hasClass('on')){
+    if($(this).hasClass('on')) {
       $('nav-menu').show();
       showMenuItem(0);
     } else {
@@ -310,6 +361,7 @@ define(['../jquery.min', '../jquery-ui.min'], function(jquery, jqueryui){
       $('#' + $(this).data('overlay') + '-overlay').show();
     }
   });
+
 
     function showMenuItem(i) {
       if($('#project-'+i).length == 0) return;

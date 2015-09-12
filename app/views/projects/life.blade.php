@@ -61,7 +61,13 @@
                     HeavyWeight SpaceShip
                 </span>
                 <br>
-
+                <span class="pattern-select btn-ctrl" data-pattern="shuttle">
+                    Shuttle
+                </span>
+                <br>
+                <span class="pattern-select btn-ctrl" data-pattern="glider-gun">
+                    Glider Gun
+                </span>
             </div>
         </div>
         <div id="rules-overlay" class="project-overlay" style="display: none">

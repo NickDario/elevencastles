@@ -66,6 +66,18 @@ define(['etc/Canvas'], function(Canvas){
     }
   };
 
+  Life.prototype._growGrid = function(){
+    this.squares.unshift([]);
+    this.squares.push([]);
+    for(var x in this.squares){
+      this.squares[x].unshift([]);
+      this.squares[x].push([]);
+      for(var y in this.squares[x]){
+        this.squares[x][y] = this.squares[x][y] != null ? this.squares[x][y] : 0;
+      }
+    }
+  };
+
   Life.prototype.initClick = function(){
     var life = this;
     this.canvas.addEventListener('mousedown', function(){
@@ -193,13 +205,19 @@ define(['etc/Canvas'], function(Canvas){
         this._createGlider(center, color);
         break;
       case 's-spaceship':
-        this._createMSpaceship(center, 0, color);
+        this._createSpaceship(center, 0, color);
         break;
       case 'm-spaceship':
-        this._createMSpaceship(center, 1, color);
+        this._createSpaceship(center, 1, color);
         break;
       case 'l-spaceship':
-        this._createMSpaceship(center, 2, color);
+        this._createSpaceship(center, 2, color);
+        break;
+      case 'shuttle':
+        this._createShuttle(center, color);
+        break;
+      case 'glider-gun':
+        this._createGliderGun(center, color);
         break;
     }
   };
@@ -212,7 +230,7 @@ define(['etc/Canvas'], function(Canvas){
       this._setRelativeSquare(center, {x: -1, y: -1}, color);
   };
 
-  Life.prototype._createMSpaceship = function(center, size, color){
+  Life.prototype._createSpaceship = function(center, size, color){
     this._setRelativeSquare(center, {x:2,y:1}, color);
     this._setRelativeSquare(center, {x:2,y:0}, color);
     this._setRelativeSquare(center, {x:2,y:-1}, color);
@@ -230,6 +248,88 @@ define(['etc/Canvas'], function(Canvas){
       this._setRelativeSquare(center, {x:-3,y:-1}, color);
       this._setRelativeSquare(center, {x:-4,y:0}, color);
     }
+  };
+
+  Life.prototype._createShuttle = function(center, color){
+    this._setRelativeSquare(center,{x:-11,y:0}, color);
+    this._setRelativeSquare(center,{x:-11,y:-1}, color);
+    this._setRelativeSquare(center,{x:-10,y:0}, color);
+    this._setRelativeSquare(center,{x:-10,y:-1}, color);
+    this._setRelativeSquare(center,{x:-7,y:1}, color);
+    this._setRelativeSquare(center,{x:-7,y:0}, color);
+    this._setRelativeSquare(center,{x:-7,y:-1}, color);
+    this._setRelativeSquare(center,{x:-6,y:1}, color);
+    this._setRelativeSquare(center,{x:-6,y:0}, color);
+    this._setRelativeSquare(center,{x:-6,y:-1}, color);
+    this._setRelativeSquare(center,{x:-2,y:3}, color);
+    this._setRelativeSquare(center,{x:-2,y:2}, color);
+    this._setRelativeSquare(center,{x:-2,y:-2}, color);
+    this._setRelativeSquare(center,{x:-2,y:-3}, color);
+    this._setRelativeSquare(center,{x:-1,y:-2}, color);
+    this._setRelativeSquare(center,{x:-1,y:-1}, color);
+    this._setRelativeSquare(center,{x:-1,y:0}, color);
+    this._setRelativeSquare(center,{x:-1,y:1}, color);
+    this._setRelativeSquare(center,{x:-1,y:2}, color);
+    this._setRelativeSquare(center,{x:0,y:1}, color);
+    this._setRelativeSquare(center,{x:0,y:0}, color);
+    this._setRelativeSquare(center,{x:0,y:-1}, color);
+    this._setRelativeSquare(center,{x:1,y:0}, color);
+    this._setRelativeSquare(center,{x:9,y:0}, color);
+    this._setRelativeSquare(center,{x:9,y:-1}, color);
+    this._setRelativeSquare(center,{x:10,y:0}, color);
+    this._setRelativeSquare(center,{x:10,y:-1}, color);
+  };
+
+  Life.prototype._createGliderGun = function(center, color){
+    this._setRelativeSquare(center,{x:-18,y:0},color);
+    this._setRelativeSquare(center,{x:-18,y:-1},color);
+    this._setRelativeSquare(center,{x:-17,y:0},color);
+    this._setRelativeSquare(center,{x:-17,y:-1},color);
+
+    this._setRelativeSquare(center,{x:-7,y:0},color);
+    this._setRelativeSquare(center,{x:-7,y:-1},color);
+    this._setRelativeSquare(center,{x:-7,y:-2},color);
+    this._setRelativeSquare(center,{x:-6,y:1},color);
+    this._setRelativeSquare(center,{x:-6,y:-3},color);
+    this._setRelativeSquare(center,{x:-5,y:2},color);
+    this._setRelativeSquare(center,{x:-5,y:-4},color);
+    this._setRelativeSquare(center,{x:-4,y:1},color);
+    this._setRelativeSquare(center,{x:-4,y:-3},color);
+    this._setRelativeSquare(center,{x:-3,y:0},color);
+    this._setRelativeSquare(center,{x:-3,y:-1},color);
+    this._setRelativeSquare(center,{x:-3,y:-2},color);
+    this._setRelativeSquare(center,{x:-2,y:0},color);
+    this._setRelativeSquare(center,{x:-2,y:-1},color);
+    this._setRelativeSquare(center,{x:-2,y:-2},color);
+
+    this._setRelativeSquare(center,{x:3,y:0},color);
+    this._setRelativeSquare(center,{x:3,y:1},color);
+    this._setRelativeSquare(center,{x:3,y:2},color);
+    this._setRelativeSquare(center,{x:4,y:-1},color);
+    this._setRelativeSquare(center,{x:4,y:0},color);
+    this._setRelativeSquare(center,{x:4,y:2},color);
+    this._setRelativeSquare(center,{x:4,y:3},color);
+    this._setRelativeSquare(center,{x:5,y:-1},color);
+    this._setRelativeSquare(center,{x:5,y:0},color);
+    this._setRelativeSquare(center,{x:5,y:2},color);
+    this._setRelativeSquare(center,{x:5,y:3},color);
+    this._setRelativeSquare(center,{x:6,y:-1},color);
+    this._setRelativeSquare(center,{x:6,y:0},color);
+    this._setRelativeSquare(center,{x:6,y:1},color);
+    this._setRelativeSquare(center,{x:6,y:2},color);
+    this._setRelativeSquare(center,{x:6,y:3},color);
+    this._setRelativeSquare(center,{x:7,y:4},color);
+    this._setRelativeSquare(center,{x:7,y:3},color);
+    this._setRelativeSquare(center,{x:7,y:-1},color);
+    this._setRelativeSquare(center,{x:7,y:-2},color);
+
+    this._setRelativeSquare(center,{x:12,y:0},color);
+    this._setRelativeSquare(center,{x:12,y:-1},color);
+
+    this._setRelativeSquare(center,{x:16,y:1},color);
+    this._setRelativeSquare(center,{x:16,y:2},color);
+    this._setRelativeSquare(center,{x:17,y:1},color);
+    this._setRelativeSquare(center,{x:17,y:2},color);
   };
 
   Life.prototype._hasLock = function(x,y){

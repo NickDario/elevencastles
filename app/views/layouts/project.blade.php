@@ -13,7 +13,7 @@
     <body>
         <div id="project-navigation">
             <span id="nav-toggle" class="btn-ctrl btn-menu">Projects</span>
-            <div id="nav-menu">
+            <div id="nav-menu" style="display:none;">
                 <?php foreach ($projects as $project): ?>
                     <a href="{{url('/', array('pid' => $project['id']))}}" id="project-<?php echo $project['id'];?>" class="btn-ctrl btn-menu <?php echo $current['id'] == $project['id'] ? 'on' : '';?>"><?php echo $project['name'];?></a>
                 <?php endforeach; ?>

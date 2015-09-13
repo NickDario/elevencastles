@@ -1,4 +1,4 @@
-/bootstrap/compiled.php
+public/assets/bootstrap
 composer.phar
 composer.lock
 .env.*.php

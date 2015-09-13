@@ -318,7 +318,7 @@ define(['../jquery.min', '../jquery-ui.min'], function(jquery, jqueryui){
       div.appendChild(value);
       $(slider).slider({
         max: 10000,
-        min: 1,
+        min: 10,
         value: 100,
         step : 10,
         change: function(e, ui){
@@ -338,7 +338,8 @@ define(['../jquery.min', '../jquery-ui.min'], function(jquery, jqueryui){
   $('#nav-toggle').on('click', function(){
     $(this).toggleClass('on');
     if($(this).hasClass('on')) {
-      $('nav-menu').show();
+      //$('#nav-menu').show();
+        $('#nav-menu').show();
       showMenuItem(0);
     } else {
       hideMenuItem($('.btn-menu[id^="project"]').length-1);
@@ -364,13 +365,18 @@ define(['../jquery.min', '../jquery-ui.min'], function(jquery, jqueryui){
 
 
     function showMenuItem(i) {
-      if($('#project-'+i).length == 0) return;
+      if($('#project-'+i).length == 0){
+          return;
+      }
       $('#project-'+i).addClass('show');
       window.setTimeout(showMenuItem.bind(this, ++i), 50);
     }
 
     function hideMenuItem(i) {
-      if($('#project-'+i).length == 0) return;
+      if($('#project-'+i).length == 0){
+          $('#nav-menu').hide();
+          return;
+      }
       $('#project-'+i).removeClass('show');
       window.setTimeout(hideMenuItem.bind(this, --i), 50);
     }

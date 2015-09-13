@@ -40,6 +40,7 @@
 .ui-helper-clearfix {
   min-height: 0;
   /* support: IE7 */
+
 }
 .ui-helper-zfix {
   width: 100%;
@@ -85,6 +86,7 @@
   padding: .5em .5em .5em .7em;
   min-height: 0;
   /* support: IE7 */
+
 }
 .ui-accordion .ui-accordion-icons {
   padding-left: 2.2em;
@@ -123,6 +125,7 @@
   text-align: center;
   overflow: visible;
   /* removes extra width in IE */
+
 }
 .ui-button,
 .ui-button:link,
@@ -454,6 +457,7 @@ button.ui-button::-moz-focus-inner {
   padding: 0;
   width: 100%;
   /* support: IE10, see #8844 */
+
   list-style-image: url(data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7);
 }
 .ui-menu .ui-menu-divider {
@@ -470,6 +474,7 @@ button.ui-button::-moz-focus-inner {
   line-height: 1.5;
   min-height: 0;
   /* support: IE7 */
+
   font-weight: normal;
 }
 .ui-menu .ui-menu-item a.ui-state-focus,
@@ -606,16 +611,24 @@ button.ui-button::-moz-focus-inner {
   width: .4em;
   cursor: pointer;
   /* Chrome/Safari */
+
   /* Firefox */
+
   /* IE10+ */
+
   /* Rules below not implemented in browsers yet */
+
   -webkit-user-select: none;
   /* Chrome/Safari */
+
   -moz-user-select: none;
   /* Firefox */
+
   -ms-user-select: none;
   /* IE10+ */
+
   /* Rules below not implemented in browsers yet */
+
   -o-user-select: none;
   user-select: none;
 }
@@ -716,11 +729,13 @@ button.ui-button::-moz-focus-inner {
 /* TR overrides */
 .ui-spinner .ui-icon-triangle-1-s {
   /* need to fix icons sprite */
+
   background-position: -65px -16px;
 }
 .ui-tabs {
   position: relative;
   /* position: relative prevents IE scroll bug (element with position: relative inside container with overflow: auto appear as "fixed") */
+
   padding: .2em;
 }
 .ui-tabs .ui-tabs-nav {
@@ -904,6 +919,7 @@ body .ui-tooltip {
 .ui-state-disabled .ui-icon {
   filter: alpha(opacity=35);
   /* For IE8 - See #6059 */
+
 }
 /* Icons
 ----------------------------------*/
@@ -1500,16 +1516,24 @@ body {
 }
 canvas {
   /* Chrome/Safari */
+
   /* Firefox */
+
   /* IE10+ */
+
   /* Rules below not implemented in browsers yet */
+
   -webkit-user-select: none;
   /* Chrome/Safari */
+
   -moz-user-select: none;
   /* Firefox */
+
   -ms-user-select: none;
   /* IE10+ */
+
   /* Rules below not implemented in browsers yet */
+
   -o-user-select: none;
   user-select: none;
 }
@@ -1546,6 +1570,7 @@ canvas {
   background-color: #000000;
   background-image: url("../images/black-linen-2.png");
   /*background: url("../images/black-linen-2.png") center;*/
+
   height: 100%;
   position: fixed;
   width: 100%;
@@ -1566,8 +1591,11 @@ canvas {
   position: fixed;
   z-index: 1000;
   top: 25px;
-  left: 25px;
+  left: 50px;
   background: transparent;
+}
+#project-navigation .btn-ctrl {
+  margin-left: 0;
 }
 #project-navigation #nav-menu {
   width: 200px;
@@ -1632,16 +1660,24 @@ canvas {
   display: inline-block;
   text-align: center;
   /* Chrome/Safari */
+
   /* Firefox */
+
   /* IE10+ */
+
   /* Rules below not implemented in browsers yet */
+
   -webkit-user-select: none;
   /* Chrome/Safari */
+
   -moz-user-select: none;
   /* Firefox */
+
   -ms-user-select: none;
   /* IE10+ */
+
   /* Rules below not implemented in browsers yet */
+
   -o-user-select: none;
   user-select: none;
 }
@@ -1776,6 +1812,7 @@ body {
   background-color: #000000;
   background-image: url("../images/black-linen-2.png");
   /*background: url("../images/black-linen-2.png") center;*/
+
   height: 100%;
   position: fixed;
   width: 100%;
@@ -1878,11 +1915,15 @@ body {
 .noselect {
   -webkit-user-select: none;
   /* Chrome/Safari */
+
   -moz-user-select: none;
   /* Firefox */
+
   -ms-user-select: none;
   /* IE10+ */
+
   /* Rules below not implemented in browsers yet */
+
   -o-user-select: none;
   user-select: none;
 }
@@ -1892,40 +1933,58 @@ body {
 }
 .tree > span.triangle {
   /* Chrome/Safari */
+
   /* Firefox */
+
   /* IE10+ */
+
   /* Rules below not implemented in browsers yet */
+
   -webkit-user-select: none;
   /* Chrome/Safari */
+
   -moz-user-select: none;
   /* Firefox */
+
   -ms-user-select: none;
   /* IE10+ */
+
   /* Rules below not implemented in browsers yet */
+
   -o-user-select: none;
   user-select: none;
   transition-duration: .1s;
   display: inline-block;
   -ms-transform: rotate(0deg);
   /* IE 9 */
+
   -webkit-transform: rotate(0deg);
   /* Chrome, Safari, Opera */
+
   transform: rotate(0deg);
   color: white;
   font-size: 1em;
 }
 .tree > span.head {
   /* Chrome/Safari */
+
   /* Firefox */
+
   /* IE10+ */
+
   /* Rules below not implemented in browsers yet */
+
   -webkit-user-select: none;
   /* Chrome/Safari */
+
   -moz-user-select: none;
   /* Firefox */
+
   -ms-user-select: none;
   /* IE10+ */
+
   /* Rules below not implemented in browsers yet */
+
   -o-user-select: none;
   user-select: none;
   cursor: pointer;
@@ -1935,8 +1994,10 @@ body {
 .tree.open > span.triangle {
   -ms-transform: rotate(90deg);
   /* IE 9 */
+
   -webkit-transform: rotate(90deg);
   /* Chrome, Safari, Opera */
+
   transform: rotate(90deg);
 }
 .tree.open > ul {
@@ -2027,6 +2088,27 @@ body {
 }
 canvas:active {
   cursor: default;
+  /* Chrome/Safari */
+
+  /* Firefox */
+
+  /* IE10+ */
+
+  /* Rules below not implemented in browsers yet */
+
+  -webkit-user-select: none;
+  /* Chrome/Safari */
+
+  -moz-user-select: none;
+  /* Firefox */
+
+  -ms-user-select: none;
+  /* IE10+ */
+
+  /* Rules below not implemented in browsers yet */
+
+  -o-user-select: none;
+  user-select: none;
 }
 #pattern-controls {
   float: left;

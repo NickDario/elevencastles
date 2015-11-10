@@ -23,6 +23,7 @@ return array(
     'MiscController' => $baseDir . '/app/controllers/misc/MiscController.php',
     'MusicController' => $baseDir . '/app/controllers/music/MusicController.php',
     'RPController' => $baseDir . '/app/controllers/religonpolitics/RPController.php',
+    'RestController' => $baseDir . '/app/controllers/RestController.php',
     'SassBoolean' => $vendorDir . '/richthegeek/phpsass/script/literals/SassBoolean.php',
     'SassBooleanException' => $vendorDir . '/richthegeek/phpsass/script/literals/SassLiteralExceptions.php',
     'SassColour' => $vendorDir . '/richthegeek/phpsass/script/literals/SassColour.php',

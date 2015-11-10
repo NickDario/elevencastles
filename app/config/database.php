@@ -46,9 +46,9 @@ return array(
 
 	'connections' => array(
 
-		'sqlite' => array(
+		'rss' => array(
 			'driver'   => 'sqlite',
-			'database' => __DIR__.'/../database/production.sqlite',
+			'database' => __DIR__.'/../database/rss.db',
 			'prefix'   => '',
 		),
 

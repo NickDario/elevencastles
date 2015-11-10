@@ -331,6 +331,15 @@ define(['../jquery.min', '../jquery-ui.min'], function(jquery, jqueryui){
     });
   });
 
+
+  $('[data-script="news"]').each(function(){
+      require(['../resources/d3.min'], function(){
+        require(['projects/News'], function() {
+
+        });
+      });
+  });
+
   $('.head').on('click', function(){
       $(this).parent().toggleClass('open');
   });

@@ -1,4 +1,4 @@
-life/**
+/**
  * Created by ndario on 8/30/15.
  */
 

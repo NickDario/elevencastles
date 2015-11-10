@@ -156,3 +156,34 @@ canvas{
   width: 150px !important;
 }
 
+#news{
+  //background-color: #eee;
+}
+
+&.small-stage{
+  position:absolute;
+  right:250px;
+  left: 250px;
+  top:100px;
+  bottom:100px;
+  background: fade(@primary-dark, 85%);
+  padding: 25px;
+}
+
+
+&.full-stage{
+  position:absolute;
+  left:250px;
+  right:0;
+  top:0;
+  bottom:0;
+  background: #eee;
+  padding:25px;
+}
+
+#hours-chart,
+#days-chart,
+#months-chart{
+  height:33%;
+}
+

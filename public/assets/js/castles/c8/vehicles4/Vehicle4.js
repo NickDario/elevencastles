@@ -179,7 +179,7 @@ function(Vector, Genome, Sense)
           },
           sensesCount: {
             name:'sensesCount',
-          val: 2,
+            val: 2,
             mr  : 50,
             minv:1
           },
@@ -332,7 +332,7 @@ function(Vector, Genome, Sense)
     Vehicle4.prototype.eat = function(object)
     {
       this.focusing = false;
-      if(object.type == 'vehicle'){
+      if(object.type == 'vehicle') {
           this.energy += this.life * (object.area / this.area);
       } else if (object.type == 'fuel') {
           this.energy += object.nutrition;

@@ -181,7 +181,7 @@ function(Canvas, VectorND, Vehicle, Plant){
     {
       var lakeWater = 0;
       while(this.water > lakeWater){
-        var la = (Math.random() * this.water);
+        var la = (Math.random() * (this.water/3));
         lakeWater += la;
         var lr = la / (2 * Math.PI);
         this.lakes.push({

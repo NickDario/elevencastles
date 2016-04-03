@@ -36,6 +36,8 @@ define(['etc/Canvas', 'chess/Board', 'chess/Piece'], function(Canvas, Board, Pie
 
         this.history = [];
         this.movecount = 0;
+
+        this.onendturn = null;
     }
 
     Chess.constructor = Chess;
@@ -132,14 +134,20 @@ define(['etc/Canvas', 'chess/Board', 'chess/Piece'], function(Canvas, Board, Pie
         if(this.selected && this.selected.checkMove(position.rank, position.file, this.allPieces())){ //  make a' +
             //var valid = false;
             var piece = this.atSquare(position, this.selected.enemy());
+            var move = {'then':{rank:this.selected.rank, file:this.selected.file}, 'now':position};
+
             if(piece != null) {
                 piece.taken();
+                move['killed'] = piece.id;
             }
-            this.history.push({'then':{
-                rank:this.selected.rank,
-                file:this.selected.file
-            }, 'now':position, 'killed':piece});
+
+            if (this.history.length == this.movecount) {
+                this.history.push(move);
+            } else {
+                this.history[this.movecount] = move;
+            }
             this.movecount ++ ;
+            this.history = this.history.slice(0,this.movecount);
             this.selected.moveTo(position);
             this.endTurn();
             this.render();
@@ -188,13 +196,21 @@ define(['etc/Canvas', 'chess/Board', 'chess/Piece'], function(Canvas, Board, Pie
         if(this.movecount <= 0 || this.history.length <= 0){
             return false;
         }
+        if(this.selected != null) {
+            this.selected.selected = false;
+        }
         this.selected = null;
         this.turn = this.turn == 'bot' ? 'top' : 'bot';
         var prev = this.history[--this.movecount];
         var piece = this.atSquare(prev.now,this.turn);
         piece.moveTo(prev.then);
         if (prev.killed != null) {
-           prev.alive = true;
+            var pieces = this.allPieces();
+            for (var i in pieces){
+                if(pieces[i].id == prev.killed) {
+                    pieces[i].alive = true;
+                }
+            }
         }
         this.render();
     };
@@ -203,14 +219,22 @@ define(['etc/Canvas', 'chess/Board', 'chess/Piece'], function(Canvas, Board, Pie
         if(this.movecount >= this.history.length){
             return false;
         }
+        if(this.selected != null) {
+            this.selected.selected = false;
+        }
         this.selected = null;
-        this.turn = this.turn == 'bot' ? 'top' : 'bot';
-        var next = this.history[++this.movecount];
+        var next = this.history[this.movecount++];
         var piece = this.atSquare(next.then,this.turn);
         piece.moveTo(next.now);
         if (next.killed != null) {
-            prev.alive = false;
+            var pieces = this.allPieces();
+            for (var i in pieces){
+                if(pieces[i].id == next.killed) {
+                    pieces[i].alive = false;
+                }
+            }
         }
+        this.turn = this.turn == 'bot' ? 'top' : 'bot';
         this.render();
     };
 
@@ -279,10 +303,28 @@ define(['etc/Canvas', 'chess/Board', 'chess/Piece'], function(Canvas, Board, Pie
         this.selected.selected = false;
         this.selected = null;
         this.turn = this.turn == 'bot' ? 'top' : 'bot';
+        this.onEndTurn();
+    };
+
+    Chess.prototype.onEndTurn = function(){
+        if(this.onendturn == null) {
+            return true;
+        } else {
+            this.onendturn();
+        }
     };
 
     Chess.prototype.addToPit = function(piece) {
         var pit_ctx = piece.team == 'top' ? this.top_context : this.bot_context;
+    };
+
+    Chess.prototype.getPieceById = function(id) {
+        var pieces = this.allPieces();
+        for (var i in pieces){
+            if(pieces[i].id = id) {
+
+            }
+        }
     };
 
     Chess.prototype.markSquares = function() {

@@ -16,10 +16,10 @@
                 <a id="new-game" class="btn-ctrl" href="#">
                     <span>New Game</span>
                 </a>
-                <a id="undo" class="btn-ctrl" href="#">
+                <a id="undo" class="btn-ctrl disabled" href="#">
                     <span>Undo</span>
                 </a>
-                <a id="redo" class="btn-ctrl" href="#">
+                <a id="redo" class="btn-ctrl disabled" href="#">
                     <span>Redo</span>
                 </a>
                 <a id="color-aid" class="colors btn-ctrl" href="#">

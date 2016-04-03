@@ -365,6 +365,33 @@ define(['../jquery.min', '../jquery-ui.min'], function(jquery, jqueryui){
 
             });
 
+            chess.onendturn = function(){$('#undo').removeClass('disabled');};
+
+            $('#undo').on('click', function(){
+                chess.undo();
+                if(chess.movecount == 0){
+                    $(this).addClass('disabled');
+                } else {
+                    $(this).removeClass('disabled');
+                }
+                if(chess.movecount < chess.history.length){
+                    $('#redo').removeClass('disabled');
+                }
+            });
+
+            $('#redo').on('click', function(){
+                chess.redo();
+                if(chess.movecount == chess.history.length){
+                    $(this).addClass('disabled');
+                } else {
+                    $(this).removeClass('disabled');
+                }
+
+                if(chess.movecount > 0){
+                    $('#undo').removeClass('disabled');
+                }
+            });
+
         });
     });
 

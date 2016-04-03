@@ -20,5 +20,17 @@
   #project-controls{
     margin-left: 25px;
     margin-top: -15px;
+
+    .btn-ctrl{
+      &.disabled{
+        cursor:not-allowed;
+        color:grey;
+        border-color:@primary-dark;
+        &:hover{
+          box-shadow: none;
+          outline:none;
+        }
+      }
+    }
   }
 }

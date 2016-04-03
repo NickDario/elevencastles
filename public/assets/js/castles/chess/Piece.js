@@ -7,6 +7,18 @@ define(function(){
         this.rank = rank;
         this.file = file;
         this.alive = true;
+
+        function guid() {
+            function s4() {
+                return Math.floor((1 + Math.random()) * 0x10000)
+                    .toString(16)
+                    .substring(1);
+            }
+            return s4() + s4() + '-' + s4() + '-' + s4() + '-' +
+                s4() + '-' + s4() + s4() + s4();
+        }
+
+        this.id = guid();
     }
 
     Piece.prototype.enemy = function() {

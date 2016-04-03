@@ -340,6 +340,34 @@ define(['../jquery.min', '../jquery-ui.min'], function(jquery, jqueryui){
       });
   });
 
+    $('[data-script="chess"]').each(function(){
+        require(['projects/Chess'], function(Chess) {
+            var chess = new Chess({
+                'canvas_id' : 'chess-canvas'
+            });
+            chess.init();
+
+            $('#color-aid').on('click', function(){
+                if($(this).hasClass('on')) {
+                    $(this).removeClass('on');
+                    chess.coloraid = false;
+                    console.log(chess.coloraid);
+                    chess.render();
+                } else {
+                    $(this).addClass('on');
+                    chess.coloraid = true;
+                    console.log(chess.coloraid);
+                    chess.render();
+                }
+            });
+
+            $('#new-game').on('click', function(){
+
+            });
+
+        });
+    });
+
   $('.head').on('click', function(){
       $(this).parent().toggleClass('open');
   });

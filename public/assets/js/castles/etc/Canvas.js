@@ -6,7 +6,7 @@ define(function(){
    *  Author:      Nicholas Dario
    *
    *  Features:
-   *    Regioned element processing.
+   *    Region element processing.
    *    Pause and Play functionality.
    *    Mouse coordinates.
    *    Simple draw profiling.

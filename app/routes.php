@@ -19,7 +19,7 @@
 Route::get('/submit/{action}', 'RestController@submittal');
 Route::get('/{pid?}', 'CastleController@showProject');
 Route::group(['prefix'=>'ajax'], function(){
-    Route::get('news', 'CastleController@newsSentiment');
+    Route::any('news', 'CastleController@newsSentiment');
 });
 
 //

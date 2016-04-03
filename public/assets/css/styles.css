@@ -1721,7 +1721,7 @@ canvas {
 #hours-chart,
 #days-chart,
 #months-chart {
-  height: 33%;
+  height: 100%;
 }
 #blank-main-container {
   height: 100%;
@@ -2156,4 +2156,24 @@ canvas:active {
   margin-left: 0;
   margin-top: 10px;
   background: #4d4d4d;
+}
+#board-stage {
+  width: 100%;
+  height: 70%;
+  background: #000;
+  margin-top: -5px;
+}
+#top-pit {
+  width: 100%;
+  height: 15%;
+  background: #000;
+}
+#bot-pit {
+  width: 100%;
+  height: 15%;
+  background: #000;
+}
+#chess #project-controls {
+  margin-left: 25px;
+  margin-top: -15px;
 }

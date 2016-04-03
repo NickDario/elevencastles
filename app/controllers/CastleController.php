@@ -43,6 +43,14 @@ class CastleController extends BaseController{
             array(
                 'id' => 6,
                 'name' => 'News'
+            ),
+            array(
+                'id' => 7,
+                'name' => 'Story'
+            ),
+            array(
+                'id' => 8,
+                'name' => 'Chess'
             )
         );
     }
@@ -104,6 +112,16 @@ class CastleController extends BaseController{
                     'current' => $this->projects[$pid],
                     'projects' => $this->projects
                 ));
+            case 7:
+                return View::make('projects.story', array(
+                    'current' => $this->projects[$pid],
+                    'projects' => $this->projects
+                ));
+            case 8:
+                return View::make('projects.chess', array(
+                    'current' => $this->projects[$pid],
+                    'projects' => $this->projects
+                ));
             default:
                 break;
         }
@@ -112,62 +130,100 @@ class CastleController extends BaseController{
     public function newsSentiment()
     {
         $feeds = Input::get('feeds', array());
-        $agg = json_decode(Input::get('agg', '[hour, day, month]'));
+        $minOffset = Input::get('minOffset', 0);
+        $agg = json_decode(Input::get('agg', '["hour", "day", "month"]'));
 
+        $db = DB::connection('rss');
         $feeds = DB::connection('rss')->select('SELECT * FROM feeds');
-        $stories = DB::connection('rss')->select('SELECT * FROM stories');
+        $stories = DB::connection('rss')->select('SELECT * FROM stories order by date desc');
+
 
         $aFeeds = array();
         foreach($feeds as $feed){
             $feed->stories = array();
             $aFeeds[$feed->id] = $feed;
-
         }
+
         foreach($stories as $story){
+            $date = date_create_from_format('Y-m-d_H-i-s', $story->date);
             $aFeeds[$story->feeds_id]->stories[] = array(
                 'id' => (int)$story->id,
                 'title' => $story->title,
-                'date' => date_create_from_format('Y-m-d_H-i-s', $story->date),
+                'date' => $date->sub(new DateInterval('PT8H')),
                 'sentiment' => (int)$story->sentiment,
             );
         }
 
-        $serieslist = array();
+        $now = new Datetime();
+        $now->setTimezone(new DateTimeZone('America/Los_Angeles'));
+//        $now_year = $now->format('Y');
+//        $now_month = $now->format('m');
+//        $now_day = $now->format('d');
+//
+//
+//        $hourlist = array();
+//        $daylist=array();
+//        $monthlist = array();
+//        for($h=0;$h<24;$h++){
+//            $hourlist[] = array(
+//                'x' => $h,
+//                'y' => 0
+//            );
+//        }
+//        for($d=0;$d<date('t');$d++){
+//            $daylist[$d] = array(
+//                'x' => $d,
+//                'y' => 0
+//            );
+//        }
+//        for($m=0;$m<12;$m++){
+//            $monthlist[$m] = array(
+//                'x' => $m,
+//                'y' => 0
+//            );
+//        }
+
+        $unixlist = array();
+
+        $aSentimentTime = array();
         foreach ($aFeeds as $feed) {
             foreach ($feed->stories as $story) {
-                $hour = (int)$story['date']->format('H');
-                $day = (int)$story['date']->format('d');
-                $month = (int)$story['date']->format('m');
-                $year = (int)$story['date']->format('Y');
-                if(in_array('hour', $agg)){
-                    if( isset($serieslist['hour'][$hour]) ){
-                        $serieslist['hour'][$year][$month][$day][$hour] += $story['sentiment'];
-                    } else {
-                        $serieslist['hour'][$year][$month][$day][$hour] = $story['sentiment'];
-                    }
-                }
-                if(in_array('day', $agg)){
-                    if( isset($serieslist['day'][$day]) ) {
-                        $serieslist['day'][$year][$month][$day] += $story['sentiment'];
-                    } else {
-                        $serieslist['day'][$year][$month][$day] = $story['sentiment'];
-                    }
-                }
-                if(in_array('month', $agg)){
-                    if( isset($serieslist['day'][$month ]) ) {
-                        $serieslist['month'][$year][$month] += $story['sentiment'];
-                    } else {
-                        $serieslist['month'][$year][$month] += $story['sentiment'];
-                    }
-                }
+                $aSentimentTime[] = array(
+                    'x' => $story['date']->getTimestamp(),
+                    'y' => $story['sentiment']
+                );
             }
         }
 
+        usort($aSentimentTime, function($a,$b){return $a['x'] > $b['x'];});
+        $timeset = $this->_aggSentiment($aSentimentTime, 3600 * 3, 'Y-m-d-H-i-s');
 
-        echo json_encode($serieslist);
+
+        echo json_encode(array(
+            'ulist' => $timeset,
+        ));
     }
 
+    protected function _aggSentiment($times, $sec, $format = null){
+        $aggTimes  = array();
+        $sentiment = array();
 
+        $t = 0;
+        $dt = new Datetime();
+        foreach($times as $time){
+            if($t == 0) $t = $time['x'];
+            if($time['x'] > $t + $sec){
+                $aggTimes[] = array(
+                    'x' => $format == null ? $t : $dt->setTimestamp($t)->format($format),
+                    'y' => array_sum($sentiment)/sizeof($sentiment)
+                );
+                $t += $sec;
+                $sentiment = array();
+            }
 
+            $sentiment[] += $time['y'];
+        }
 
+        return $aggTimes;
+    }
 }

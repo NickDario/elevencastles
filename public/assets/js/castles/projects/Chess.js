@@ -48,7 +48,12 @@ define(['etc/Canvas', 'chess/Board', 'chess/Piece'], function(Canvas, Board, Pie
         this.initMouse();
         this.initBoard();
         this.initControls();
+        this.initPieces();
 
+        this.render();
+    };
+
+    Chess.prototype.initPieces = function() {
         //  top team
         //  pawns
         for(var i=0; i < 8; i ++){
@@ -87,8 +92,27 @@ define(['etc/Canvas', 'chess/Board', 'chess/Piece'], function(Canvas, Board, Pie
         //  king
         this.botpieces['king'].push(new Piece('king', 'bot', this.botcolor, 7, 3));
 
-        this.render();
     };
+
+    Chess.prototype.clearPieces = function() {
+        this.botpieces = {
+            'pawns' : [],
+            'rooks' : [],
+            'knights' : [],
+            'bishops' : [],
+            'queen' : [],
+            'king' : [],
+        };
+        this.toppieces = {
+            'pawns' : [],
+            'rooks' : [],
+            'knights' : [],
+            'bishops' : [],
+            'queen' : [],
+            'king' : [],
+        };
+    }
+
 
     Chess.prototype.initBoard = function() {
         this.board = new Board({
@@ -101,6 +125,18 @@ define(['etc/Canvas', 'chess/Board', 'chess/Piece'], function(Canvas, Board, Pie
 
     Chess.prototype.initControls = function() {
         this.canvas.onmousedown = this.mousedown.bind(this);
+    };
+
+    Chess.prototype.reset = function() {
+        this.toppieces = [];
+        this.botpieces = [];
+        this.turn = 'bot';
+        this.selected = null;
+        this.history = [];
+        this.movecount = 0;
+        this.clearPieces();
+        this.initPieces();
+        this.render();
     };
 
     Chess.prototype.mousedown = function(e) {

@@ -362,7 +362,7 @@ define(['../jquery.min', '../jquery-ui.min'], function(jquery, jqueryui){
             });
 
             $('#new-game').on('click', function(){
-
+                chess.reset();
             });
 
             chess.onendturn = function(){$('#undo').removeClass('disabled');};

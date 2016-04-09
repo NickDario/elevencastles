@@ -103,12 +103,7 @@ define(['chess/Piece'], function(Piece){
         }
         var x = this.x_offset + (piece.file * this.squaresize);
         var y = this.y_offset + (piece.rank * this.squaresize);
-
-        this.ctx.fillStyle = piece.selected ? 'blue' : piece.color;
-        this.ctx.fillRect(x + 10, y + 10, this.squaresize - 20, this.squaresize-20);
-
-        this.ctx.fillStyle = piece.selected ? 'white' : 'red';
-        this.ctx.fillText(piece.type, x+10, y+20, this.squaresize - 20);
+        piece.draw(this.ctx, x + 9, y + this.squaresize/2, this.squaresize);
     };
 
     Board.prototype.pointToBoard = function(point) {

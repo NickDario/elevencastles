@@ -45,11 +45,21 @@ define(['etc/Canvas', 'chess/Board', 'chess/Piece'], function(Canvas, Board, Pie
 
     Chess.prototype.init = function() {
         this.initCanvas();
+        this.initDynamicCanvas(this.resize);
         this.initMouse();
         this.initBoard();
         this.initControls();
         this.initPieces();
 
+        this.render();
+    };
+
+    Chess.prototype.resize = function() {
+        //$(that.container).height(window.innerHeight);
+        this.canvas.height= this.container.clientHeight - 20;
+        this.canvas.width = this.container.clientWidth - 20;
+        this.canvas_rect = this.canvas.getBoundingClientRect();
+        this.initBoard();
         this.render();
     };
 

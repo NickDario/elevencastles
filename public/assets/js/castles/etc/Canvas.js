@@ -81,15 +81,19 @@ define(function(){
         });
     };
 
-    Canvas.prototype.initDynamicCanvas = function()
+    Canvas.prototype.initDynamicCanvas = function(callback)
     {
         var that = this;    //  event handler reference
-        window.onresize = function(){
-            //$(that.container).height(window.innerHeight);
-            that.canvas.height= that.container.clientHeight - 20;
-            that.canvas.width = that.container.clientWidth - 20;
-            that.canvas_rect = that.canvas.getBoundingClientRect();
-        };
+        if(callback) {
+            window.onresize = callback.bind(this);
+        } else {
+            window.onresize = function(){
+                that.canvas.height= that.container.clientHeight - 20;
+                that.canvas.width = that.container.clientWidth - 20;
+                console.log('canvas resize ', that.canvas.height, ' x', that.canvas.width);
+                that.canvas_rect = that.canvas.getBoundingClientRect();
+            };
+        }
     };
 
     Canvas.prototype.cancelDynamicCanvas = function()

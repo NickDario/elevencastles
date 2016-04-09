@@ -217,5 +217,38 @@ define(function(){
         }
     };
 
+    Piece.prototype.draw = function(context, x, y, h) {
+        context.textBaseline = 'middle';
+        context.fillStyle = this.color;
+        context.font = Math.floor(h * 0.8).toString() + 'px Arial';
+        if(this.selected) {
+            context.font = Math.floor(h * 0.9).toString() + 'px Arial';
+        }
+
+        switch(this.type) {
+            case 'pawn':
+                context.fillText('\u265F', x, y);
+                break;
+            case 'rook':
+                context.fillText('\u265C', x, y);
+                break;
+            case 'knight':
+                context.fillText('\u265E', x, y);
+                break;
+            case 'bishop':
+                context.fillText('\u265D', x, y);
+                break;
+            case 'queen':
+                context.fillText('\u265B', x, y);
+                break;
+            case 'king':
+                context.fillText('\u265A', x, y);
+                break;
+            default:
+                context.fillText('\u265F', x, y);
+                break;
+        }
+    };
+
     return Piece;
 });

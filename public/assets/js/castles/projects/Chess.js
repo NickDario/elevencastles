@@ -210,6 +210,7 @@ define(['etc/Canvas', 'chess/Board', 'chess/Piece'], function(Canvas, Board, Pie
         this.markSquares();
         this.board.showCoverage = this.coloraid;
         this.board.draw();
+        this.drawPit();
         this._placePieces();
     };
 
@@ -360,8 +361,83 @@ define(['etc/Canvas', 'chess/Board', 'chess/Piece'], function(Canvas, Board, Pie
         }
     };
 
-    Chess.prototype.addToPit = function(piece) {
-        var pit_ctx = piece.team == 'top' ? this.top_context : this.bot_context;
+    Chess.prototype.drawPit = function() {
+        //var pit_ctx = piece.team == 'top' ? this.top_context : this.bot_context;
+        var x = 0;
+        var y = this.board.y_offset;
+        var w = this.board.x_offset;
+        var h = (this.board.squaresize) * 2;
+        var bgColor = 'grey';
+
+        this.board.ctx.fillStyle = bgColor;
+        this.board.ctx.fillRect(x,y,w,h);
+
+        var teamOffset = {
+            'top': y + (h * 0.25),
+            'bot': y + (h * 0.75)
+        };
+
+        var pieceOffset = {
+            'pawn' : w * (5/6),
+            'bishop' : w * (4/6),
+            'knight' : w * (3/6),
+            'rook' : w * (2/6),
+            'queen' : w * (1/6),
+        };
+
+        var pieceCounts = {
+            'top' : {
+                'pawn' : 1,
+                'bishop' : 1,
+                'knight' : 1,
+                'rook' : 1,
+                'queen' : 1,
+            },
+            'bot' : {
+                'pawn' : 1,
+                'bishop' : 1,
+                'knight' : 1,
+                'rook' : 1,
+                'queen' : 1,
+            }
+        };
+
+        var miniSize = h / 4;
+        var piece = null;
+        for (var i in this.toppieces) {
+            for (var j in this.toppieces[i]) {
+                piece = this.toppieces[i][j];
+                if (!piece.alive) {
+                    if (pieceCounts['top'][piece.type] > 1) {
+                        this.board.ctx.fillStyle = bgColor;
+                        this.board.ctx.fillRect(pieceOffset[piece.type] + miniSize, teamOffset.top, miniSize, miniSize);
+                        this.board.ctx.fillStyle = 'black';
+                        this.board.ctx.fillText('x' + pieceCounts['top'][piece.type].toString(), pieceOffset[piece.type] + miniSize, teamOffset.top + miniSize/2, miniSize);
+                    } else {
+                        piece.draw(this.board.ctx, pieceOffset[piece.type], teamOffset.top, miniSize);
+                    }
+                    pieceCounts['top'][piece.type] ++;
+                }
+            }
+        }
+        for (var m in this.botpieces) {
+            for (var n in this.botpieces[m]) {
+                piece = this.botpieces[m][n];
+                if (!piece.alive) {
+                    if (pieceCounts['bot'][piece.type] > 1) {
+                        this.board.ctx.fillStyle = bgColor;
+                        this.board.ctx.fillRect(pieceOffset[piece.type] + miniSize, teamOffset.bot, miniSize, miniSize);
+                        this.board.ctx.fillStyle = 'black';
+                        this.board.ctx.fillText('x' + pieceCounts['bot'][piece.type].toString(), pieceOffset[piece.type] + miniSize, teamOffset.bot + miniSize/2, miniSize);
+                    } else {
+                        piece.draw(this.board.ctx, pieceOffset[piece.type], teamOffset.bot, miniSize);
+                    }
+                    pieceCounts['bot'][piece.type] ++;
+                }
+            }
+        }
+
+
     };
 
     Chess.prototype.getPieceById = function(id) {

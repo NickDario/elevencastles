@@ -219,35 +219,48 @@ define(function(){
 
     Piece.prototype.draw = function(context, x, y, h) {
         context.textBaseline = 'middle';
-        context.fillStyle = this.color;
         context.font = Math.floor(h * 0.8).toString() + 'px Arial';
         if(this.selected) {
             context.font = Math.floor(h * 0.9).toString() + 'px Arial';
         }
 
+
+        var pieceUnicode = String();
         switch(this.type) {
             case 'pawn':
-                context.fillText('\u265F', x, y);
+                pieceUnicode = '\u265F';
                 break;
             case 'rook':
-                context.fillText('\u265C', x, y);
+                pieceUnicode = '\u265C';
                 break;
             case 'knight':
-                context.fillText('\u265E', x, y);
+                pieceUnicode = '\u265E';
                 break;
             case 'bishop':
-                context.fillText('\u265D', x, y);
+                pieceUnicode = '\u265D';
                 break;
             case 'queen':
-                context.fillText('\u265B', x, y);
+                pieceUnicode = '\u265B';
                 break;
             case 'king':
-                context.fillText('\u265A', x, y);
+                pieceUnicode = '\u265A';
                 break;
             default:
-                context.fillText('\u265F', x, y);
+                pieceUnicode = '\u265F';
                 break;
         }
+
+        y += h/2;
+        var tw = context.measureText(pieceUnicode).width;
+        x += (h - tw)/2;
+
+        if(this.color == '#fff') {
+            context.fillStyle = 'black';
+            context.fillText(pieceUnicode, x+2, y+1);
+        }
+
+        context.fillStyle = this.color;
+        context.fillText(pieceUnicode, x, y);
     };
 
     return Piece;

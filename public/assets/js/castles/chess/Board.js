@@ -26,6 +26,7 @@ define(['chess/Piece'], function(Piece){
         this.showCoverage = false;
         this.attacked = [];
         this.covered = [];
+
     }
 
     Board.prototype.drawSquare = function(rank, file, color) {
@@ -46,21 +47,6 @@ define(['chess/Piece'], function(Piece){
             covered = this.covered[rank][file];
         }
 
-        //var a = this.attacked.length;
-        //while(a --){
-        //    if (this.attacked[a].r == rank && this.attacked[a].f == file) {
-        //        attacked = true;
-        //        break;
-        //    }
-        //}
-        //var c = this.covered.length;
-        //while(c --) {
-        //    if (this.covered[c].r == rank && this.covered[c].f == file) {
-        //        covered = true;
-        //        break;
-        //    }
-        //}
-
         if((covered || attacked) && this.showCoverage) {
             if (covered && attacked && this.showCoverage) {
                 this.ctx.fillStyle = 'gold';
@@ -78,6 +64,7 @@ define(['chess/Piece'], function(Piece){
             this.ctx.fill();
 
             this.ctx.fillStyle = 'black';
+            this.ctx.font = '14px Arial';
             this.ctx.fillText(countText,x,y+10);
         }
     };
@@ -103,7 +90,7 @@ define(['chess/Piece'], function(Piece){
         }
         var x = this.x_offset + (piece.file * this.squaresize);
         var y = this.y_offset + (piece.rank * this.squaresize);
-        piece.draw(this.ctx, x + 9, y + this.squaresize/2, this.squaresize);
+        piece.draw(this.ctx, x, y, this.squaresize);
     };
 
     Board.prototype.pointToBoard = function(point) {

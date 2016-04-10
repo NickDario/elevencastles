@@ -7,6 +7,7 @@ define(function(){
         this.rank = rank;
         this.file = file;
         this.alive = true;
+        this.hasMoved = false;
 
         function guid() {
             function s4() {
@@ -57,7 +58,7 @@ define(function(){
             case 'pawn':
                 return this.pawnAttack(rank, file, pieces);
             case 'king':
-                return this.kingMove(rank, file);
+                return this.kingAttack(rank, file, pieces);
             case 'queen':
                 return this.queenMove(rank, file, pieces);
             case 'bishop':
@@ -67,7 +68,7 @@ define(function(){
             case 'rook':
                 return this.rookMove(rank, file, pieces);
             default :
-                return this.kingMove(rank, file);
+                return this.kingAttack(rank, file);
         }
 
     };
@@ -76,6 +77,7 @@ define(function(){
     Piece.prototype.moveTo = function(position) {
         this.rank = position.rank;
         this.file = position.file;
+        this.hasMoved = true;
     };
 
     Piece.prototype.taken = function() {
@@ -134,7 +136,41 @@ define(function(){
         }
     };
 
-    Piece.prototype.kingMove = function(rank, file) {
+    Piece.prototype.kingAttack = function(rank, file) {
+        return Math.abs(rank - this.rank) <= 1 && Math.abs(file - this.file) <= 1;
+    };
+
+    Piece.prototype.kingMove = function(rank, file, pieces) {
+        if (!this.hasMoved && this.rank == rank && Math.abs(file - this.file) == 2) {   //  castling
+            var rook = null;
+            if (this.file > file) { //  to the left
+                for (var i in pieces) {
+                    if(pieces[i].rank == this.rank && pieces[i].file < this.file) {
+                        if (pieces[i].type != 'rook' || pieces[i].team != this.team || pieces[i].hasMoved != false) {
+                            return false;
+                        }
+                        if (pieces[i].type == 'rook' && pieces[i].team == this.team && pieces[i].hasMoved == false && pieces[i].file < this.file) {
+                            rook = pieces[i];
+                        }
+                    }
+                }
+            }
+            if(this.file < file) {  //  to the right
+                for (var i in pieces) {
+                    if(pieces[i].rank == this.rank && pieces[i].file > this.file) {
+                        if (pieces[i].type != 'rook' || pieces[i].team != this.team || pieces[i].hasMoved != false) {
+                            return false;
+                        }
+                        if (pieces[i].type == 'rook' && pieces[i].team == this.team && pieces[i].hasMoved == false && pieces[i].file > this.file) {
+                            rook = pieces[i];
+                        }
+                    }
+                }
+            }
+            //  castling successfully
+
+        }
+
         if(Math.abs(rank - this.rank) <= 1 && Math.abs(file - this.file) <= 1){
             return true;
         }

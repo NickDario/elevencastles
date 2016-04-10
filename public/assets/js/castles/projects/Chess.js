@@ -8,34 +8,38 @@ define(['etc/Canvas', 'chess/Board', 'chess/Piece'], function(Canvas, Board, Pie
         this.turn = 'bot';
         this.selected = null;
 
-        this.toppit = document.getElementById('top-pit');
-        this.top_context = this.toppit.getContext('2d');
-        this.topcolor = '#000';
-        this.toppieces = {
-            'pawns' : [],
-            'rooks' : [],
-            'knights' : [],
-            'bishops' : [],
-            'queen' : [],
-            'king' : [],
-        };
-
-        this.botpit = document.getElementById('bot-pit');
-        this.bot_context = this.botpit.getContext('2d');
-        this.botcolor = '#fff';
-        this.botpieces = {
-            'pawns' : [],
-            'rooks' : [],
-            'knights' : [],
-            'bishops' : [],
-            'queen' : [],
-            'king' : [],
-        };
-
         this.coloraid = false;
-
         this.history = [];
         this.movecount = 0;
+
+        this.teams = {
+            'top' : {
+                startrank : 0,
+                forward : 1,
+                color: '#000',
+                pieces : {
+                    'pawns' : [],
+                    'rooks' : [],
+                    'knights' : [],
+                    'bishops' : [],
+                    'queen' : [],
+                    'king' : [],
+                }
+            },
+            'bot' : {
+                startrank : 7,
+                forward : -1,
+                color: '#fff',
+                pieces : {
+                    'pawns' : [],
+                    'rooks' : [],
+                    'knights' : [],
+                    'bishops' : [],
+                    'queen' : [],
+                    'king' : [],
+                }
+            }
+        }
 
         this.onendturn = null;
     }
@@ -55,7 +59,6 @@ define(['etc/Canvas', 'chess/Board', 'chess/Piece'], function(Canvas, Board, Pie
     };
 
     Chess.prototype.resize = function() {
-        //$(that.container).height(window.innerHeight);
         this.canvas.height= this.container.clientHeight - 20;
         this.canvas.width = this.container.clientWidth - 20;
         this.canvas_rect = this.canvas.getBoundingClientRect();
@@ -64,63 +67,38 @@ define(['etc/Canvas', 'chess/Board', 'chess/Piece'], function(Canvas, Board, Pie
     };
 
     Chess.prototype.initPieces = function() {
-        //  top team
-        //  pawns
-        for(var i=0; i < 8; i ++){
-            this.toppieces['pawns'].push(new Piece('pawn', 'top', this.topcolor, 1, i));
+        for(var t in this.teams) {
+            //  pawns
+            for(var i=0; i < 8; i ++){
+                this.teams[t].pieces['pawns'].push(new Piece('pawn', t, this.teams[t].color, this.teams[t].startrank + this.teams[t].forward, i));
+            }
+            //  rooks
+            this.teams[t].pieces['rooks'].push(new Piece('rook', t, this.teams[t].color, this.teams[t].startrank, 0));
+            this.teams[t].pieces['rooks'].push(new Piece('rook', t, this.teams[t].color, this.teams[t].startrank, 7));
+            //  knights
+            this.teams[t].pieces['knights'].push(new Piece('knight', t, this.teams[t].color, this.teams[t].startrank, 1));
+            this.teams[t].pieces['knights'].push(new Piece('knight', t, this.teams[t].color, this.teams[t].startrank, 6));
+            //  bishops
+            this.teams[t].pieces['bishops'].push(new Piece('bishop', t, this.teams[t].color, this.teams[t].startrank, 2));
+            this.teams[t].pieces['bishops'].push(new Piece('bishop', t, this.teams[t].color, this.teams[t].startrank, 5));
+            //  queen
+            this.teams[t].pieces['queen'].push(new Piece('queen', t, this.teams[t].color, this.teams[t].startrank, 4));
+            //  king
+            this.teams[t].pieces['king'].push(new Piece('king', t, this.teams[t].color, this.teams[t].startrank, 3));
         }
-        //  rooks
-        this.toppieces['rooks'].push(new Piece('rook', 'top', this.topcolor, 0, 0));
-        this.toppieces['rooks'].push(new Piece('rook', 'top', this.topcolor, 0, 7));
-        //  knights
-        this.toppieces['knights'].push(new Piece('knight', 'top', this.topcolor, 0, 1));
-        this.toppieces['knights'].push(new Piece('knight', 'top', this.topcolor, 0, 6));
-        //  bishops
-        this.toppieces['bishops'].push(new Piece('bishop', 'top', this.topcolor, 0, 2));
-        this.toppieces['bishops'].push(new Piece('bishop', 'top', this.topcolor, 0, 5));
-        //  queen
-        this.toppieces['queen'].push(new Piece('queen', 'top', this.topcolor, 0, 4));
-        //  king
-        this.toppieces['king'].push(new Piece('king', 'top', this.topcolor, 0, 3));
-
-        //  bot team
-        //  pawns
-        for(var i=0; i < 8; i ++){
-            this.botpieces['pawns'].push(new Piece('pawn', 'bot', this.botcolor, 6, i));
-        }
-        //  rooks
-        this.botpieces['rooks'].push(new Piece('rook', 'bot', this.botcolor, 7, 0));
-        this.botpieces['rooks'].push(new Piece('rook', 'bot', this.botcolor, 7, 7));
-        //  knights
-        this.botpieces['knights'].push(new Piece('knight', 'bot', this.botcolor, 7, 1));
-        this.botpieces['knights'].push(new Piece('knight', 'bot', this.botcolor, 7, 6));
-        //  bishops
-        this.botpieces['bishops'].push(new Piece('bishop', 'bot', this.botcolor, 7, 2));
-        this.botpieces['bishops'].push(new Piece('bishop', 'bot', this.botcolor, 7, 5));
-        //  queen
-        this.botpieces['queen'].push(new Piece('queen', 'bot', this.botcolor, 7, 4));
-        //  king
-        this.botpieces['king'].push(new Piece('king', 'bot', this.botcolor, 7, 3));
-
     };
 
     Chess.prototype.clearPieces = function() {
-        this.botpieces = {
-            'pawns' : [],
-            'rooks' : [],
-            'knights' : [],
-            'bishops' : [],
-            'queen' : [],
-            'king' : [],
-        };
-        this.toppieces = {
-            'pawns' : [],
-            'rooks' : [],
-            'knights' : [],
-            'bishops' : [],
-            'queen' : [],
-            'king' : [],
-        };
+        for( var i in this.teams) {
+            this.teams[i].pieces = {
+                'pawns' : [],
+                'rooks' : [],
+                'knights' : [],
+                'bishops' : [],
+                'queen' : [],
+                'king' : [],
+            }
+        }
     }
 
 
@@ -138,8 +116,6 @@ define(['etc/Canvas', 'chess/Board', 'chess/Piece'], function(Canvas, Board, Pie
     };
 
     Chess.prototype.reset = function() {
-        this.toppieces = [];
-        this.botpieces = [];
         this.turn = 'bot';
         this.selected = null;
         this.history = [];
@@ -177,7 +153,7 @@ define(['etc/Canvas', 'chess/Board', 'chess/Piece'], function(Canvas, Board, Pie
         }
 
         //  capture square if possible and end turn
-        if(this.selected && this.selected.checkMove(position.rank, position.file, this.allPieces())){ //  make a' +
+        if(this.selected && this.selected.checkMove(position.rank, position.file, this.allAlive())){ //  make a' +
             //var valid = false;
             var piece = this.atSquare(position, this.selected.enemy());
             var move = {'then':{rank:this.selected.rank, file:this.selected.file}, 'now':position};
@@ -186,6 +162,17 @@ define(['etc/Canvas', 'chess/Board', 'chess/Piece'], function(Canvas, Board, Pie
                 piece.taken();
                 move['killed'] = piece.id;
             }
+
+            //if (this.selected.type == 'king' && this.selected.hasMoved == false && Math.abs(position.file - this.selected.file) == 2) {    //  castling
+            //    for(var i in this.teams[this.selected.team].pieces['rooks']){
+            //        var rook = this.teams[this.selected.team].pieces['rooks'];
+            //        if(rook.file > this.selected.file && rook.hasMoved == false) {
+            //
+            //        } else if(rook.file < this.selected.file && rook.hasMoved == false) {
+            //
+            //        }
+            //    }
+            //}
 
             if (this.history.length == this.movecount) {
                 this.history.push(move);
@@ -215,20 +202,14 @@ define(['etc/Canvas', 'chess/Board', 'chess/Piece'], function(Canvas, Board, Pie
     };
 
     Chess.prototype._placePieces =  function() {
-        for (var i in this.toppieces) {
-            for (var j = 0; j < this.toppieces[i].length; j++) {
-                this.board.place(this.toppieces[i][j]);
-            }
-        }
-        for (var i in this.botpieces) {
-            for (var j = 0; j < this.botpieces[i].length; j++) {
-                this.board.place(this.botpieces[i][j]);
-            }
+        var pieces = this.allAlive();
+        for (var i=0; i < pieces.length; i ++) {
+            this.board.place(pieces[i]);
         }
     };
 
     Chess.prototype.atSquare = function(position, team) {
-        var pieces = team == 'top' ? this.toppieces : this.botpieces;
+        var pieces = this.teams[team].pieces;
         for(var i in pieces) {
             for(var j in pieces[i]){
                 if(pieces[i][j].alive && pieces[i][j].rank == position.rank && pieces[i][j].file == position.file ){
@@ -286,7 +267,7 @@ define(['etc/Canvas', 'chess/Board', 'chess/Piece'], function(Canvas, Board, Pie
     };
 
     Chess.prototype.eachPiece = function (fn, team) {
-        var pieces = team == 'top' ? this.toppieces : this.botpieces;
+        var pieces = this.teams[team].pieces;
         for(var i in pieces) {
             for(var j in pieces[i]){
                 var result = fn(pieces[i][j]);
@@ -297,19 +278,22 @@ define(['etc/Canvas', 'chess/Board', 'chess/Piece'], function(Canvas, Board, Pie
         }
     };
 
-    Chess.prototype.allAlive = function() {
-        var all_pieces = [];
-        for (var type in this.toppieces){
-            for (var i in this.toppieces[type]) {
-                if (this.toppieces[type][i].alive) {
-                    all_pieces.push(this.toppieces[type][i]);
-                }
-            }
+    Chess.prototype.allAlive = function(team) {
+        if (team == undefined) {
+            team = ['bot', 'top'];
+        } else if(typeof team == 'string') {
+            team = [team];
         }
-        for (var type in this.botpieces) {
-            for (var i in this.botpieces[type]) {
-                if (this.botpieces[type][i].alive) {
-                    all_pieces.push(this.botpieces[type][i]);
+
+        var all_pieces = [];
+        for (var i in this.teams) {
+            if(team.indexOf(i) >= 0) {
+                for (var type in this.teams[i].pieces){
+                    for (var j in this.teams[i].pieces[type]) {
+                        if(this.teams[i].pieces[type][j].alive) {
+                            all_pieces.push(this.teams[i].pieces[type][j]);
+                        }
+                    }
                 }
             }
         }
@@ -317,32 +301,22 @@ define(['etc/Canvas', 'chess/Board', 'chess/Piece'], function(Canvas, Board, Pie
     }
 
     Chess.prototype.allPieces = function(team){
+        if (team == undefined) {
+            team = ['bot', 'top'];
+        } else if(typeof team == 'string') {
+            team = [team];
+        }
+
         var all_pieces = [];
-        if(team == undefined) {
-            for (var type in this.toppieces){
-                for (var i in this.toppieces[type]) {
-                    all_pieces.push(this.toppieces[type][i]);
-                }
-            }
-            for (var type in this.botpieces) {
-                for (var i in this.botpieces[type]) {
-                    all_pieces.push(this.botpieces[type][i]);
-                }
-            }
-        } else if (team == 'top') {
-            for (var type in this.toppieces){
-                for (var i in this.toppieces[type]) {
-                    all_pieces.push(this.toppieces[type][i]);
-                }
-            }
-        } else if (team == 'bot') {
-            for (var type in this.botpieces) {
-                for (var i in this.botpieces[type]) {
-                    all_pieces.push(this.botpieces[type][i]);
+        for (var i in this.teams) {
+            if(team.indexOf(i) >= 0) {
+                for (var type in this.teams[i].pieces){
+                    for (var j in this.teams[i].pieces[type]) {
+                        all_pieces.push(this.teams[i].pieces[type][j]);
+                    }
                 }
             }
         }
-
         return all_pieces;
     };
 
@@ -362,7 +336,6 @@ define(['etc/Canvas', 'chess/Board', 'chess/Piece'], function(Canvas, Board, Pie
     };
 
     Chess.prototype.drawPit = function() {
-        //var pit_ctx = piece.team == 'top' ? this.top_context : this.bot_context;
         var x = 0;
         var y = this.board.y_offset;
         var w = this.board.x_offset;
@@ -404,47 +377,24 @@ define(['etc/Canvas', 'chess/Board', 'chess/Piece'], function(Canvas, Board, Pie
 
         var miniSize = h / 4;
         var piece = null;
-        for (var i in this.toppieces) {
-            for (var j in this.toppieces[i]) {
-                piece = this.toppieces[i][j];
-                if (!piece.alive) {
-                    if (pieceCounts['top'][piece.type] > 1) {
-                        this.board.ctx.fillStyle = bgColor;
-                        this.board.ctx.fillRect(pieceOffset[piece.type] + miniSize, teamOffset.top, miniSize, miniSize);
-                        this.board.ctx.fillStyle = 'black';
-                        this.board.ctx.fillText('x' + pieceCounts['top'][piece.type].toString(), pieceOffset[piece.type] + miniSize, teamOffset.top + miniSize/2, miniSize);
-                    } else {
-                        piece.draw(this.board.ctx, pieceOffset[piece.type], teamOffset.top, miniSize);
+        for (var i in this.teams) {
+            for (var j in this.teams[i].pieces) {
+                for (var k in this.teams[i].pieces[j]) {
+
+                    piece = this.teams[i].pieces[j][k];
+                    if (!piece.alive) {
+                        if (pieceCounts[piece.team][piece.type] > 1) {
+                            this.board.ctx.fillStyle = bgColor;
+                            this.board.ctx.fillRect(pieceOffset[piece.type] + miniSize, teamOffset[piece.team], miniSize, miniSize);
+                            this.board.ctx.fillStyle = 'black';
+                            this.board.ctx.fillText('x' + pieceCounts[piece.team][piece.type].toString(), pieceOffset[piece.type] + miniSize, teamOffset[piece.team] + miniSize/2, miniSize);
+                        } else {
+                            piece.draw(this.board.ctx, pieceOffset[piece.type], teamOffset[piece.team], miniSize);
+                        }
+                        pieceCounts[piece.team][piece.type] ++;
                     }
-                    pieceCounts['top'][piece.type] ++;
+
                 }
-            }
-        }
-        for (var m in this.botpieces) {
-            for (var n in this.botpieces[m]) {
-                piece = this.botpieces[m][n];
-                if (!piece.alive) {
-                    if (pieceCounts['bot'][piece.type] > 1) {
-                        this.board.ctx.fillStyle = bgColor;
-                        this.board.ctx.fillRect(pieceOffset[piece.type] + miniSize, teamOffset.bot, miniSize, miniSize);
-                        this.board.ctx.fillStyle = 'black';
-                        this.board.ctx.fillText('x' + pieceCounts['bot'][piece.type].toString(), pieceOffset[piece.type] + miniSize, teamOffset.bot + miniSize/2, miniSize);
-                    } else {
-                        piece.draw(this.board.ctx, pieceOffset[piece.type], teamOffset.bot, miniSize);
-                    }
-                    pieceCounts['bot'][piece.type] ++;
-                }
-            }
-        }
-
-
-    };
-
-    Chess.prototype.getPieceById = function(id) {
-        var pieces = this.allPieces();
-        for (var i in pieces){
-            if(pieces[i].id = id) {
-
             }
         }
     };
